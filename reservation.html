@@ -26,23 +26,31 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 </main>
 <dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail</label><input id="email" required type="email" autocomplete="email"></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" autocomplete="tel"></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="close">Annuler</button><button class="book" type="submit">Confirmer</button></div></form></dialog>
 <footer>EMPOWERFIT STUDIO · Un studio pensé pour les femmes de 30 ans et plus.</footer>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const initial=[
-{id:'c1',type:'cours',title:'Power Fit',day:'Lundi',time:'17 h 30',duration:'50 min',capacity:14,booked:5},
-{id:'c2',type:'cours',title:'Power Pilates',day:'Lundi',time:'18 h 30',duration:'50 min',capacity:14,booked:8},
-{id:'c3',type:'cours',title:'Power Yoga',day:'Mardi',time:'18 h 30',duration:'50 min',capacity:14,booked:3},
-{id:'c4',type:'cours',title:'Power Full',day:'Samedi',time:'10 h 00',duration:'1 h 30',capacity:12,booked:7},
-{id:'b1',type:'bilans',title:'Bilan initial obligatoire',day:'Mercredi',time:'14 h 00',duration:'45 min',capacity:1,booked:0},
-{id:'b2',type:'bilans',title:'Bilan initial obligatoire',day:'Vendredi',time:'12 h 30',duration:'45 min',capacity:1,booked:0},
-{id:'e1',type:'events',title:'Atelier Force & longévité',day:'Samedi 19 septembre',time:'14 h 00',duration:'2 h',capacity:10,booked:2}
-];
-let slots=JSON.parse(localStorage.getItem('empowerfit_slots')||'null')||initial;
+const SUPABASE_URL='https://fkyieurufkxdvzovcqzj.supabase.co';
+const SUPABASE_KEY='sb_publishable_E_9CcWp8K5VJHxe2rGjJew_p9pmd-u9';
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let slots=[];
 const grids={cours:courseGrid,bilans:bilanGrid,events:eventGrid};
-function render(){Object.values(grids).forEach(g=>g.innerHTML='');slots.forEach(s=>{const left=s.capacity-s.booked,full=left<=0;const el=document.createElement('article');el.className='card';el.innerHTML='<div class="eyebrow">'+(s.type==='cours'?'COURS':s.type==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+s.day+' · '+s.time+'<br>'+s.duration+'</div><div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div><button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':'Réserver cette place')+'</button>';grids[s.type].append(el)});document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id))}
-function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=s.day+' · '+s.time+' · '+s.duration;notice.style.display='none';booking.showModal()}
+const fmtDate=v=>new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Paris'}).format(new Date(v));
+const fmtTime=v=>new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'}).format(new Date(v)).replace(':',' h ');
+function render(){
+ Object.values(grids).forEach(g=>g.innerHTML='');
+ if(!slots.length){courseGrid.innerHTML='<article class="card"><h3>Planning en préparation</h3><p class="meta">Les prochains créneaux seront bientôt disponibles.</p></article>';return}
+ slots.forEach(s=>{const left=s.capacity-Number(s.booked),full=left<=0;const el=document.createElement('article');el.className='card';
+ el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div><div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div><button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':'Réserver cette place')+'</button>';
+ grids[s.category].append(el)});document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id))
+}
+async function loadSlots(){const {data,error}=await db.rpc('list_available_items');if(error){console.error(error);slots=[]}else slots=data||[];render()}
+function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at)+' · '+s.duration_minutes+' min';notice.style.display='none';booking.showModal()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
 close.onclick=()=>booking.close();
-bookingForm.onsubmit=e=>{e.preventDefault();const s=slots.find(x=>x.id===slotId.value);if(!s||s.booked>=s.capacity)return;s.booked++;localStorage.setItem('empowerfit_slots',JSON.stringify(slots));localStorage.setItem('empowerfit_bookings',JSON.stringify([...(JSON.parse(localStorage.getItem('empowerfit_bookings')||'[]')),{slot:s.id,first:first.value,last:last.value,email:email.value,phone:phone.value,created:new Date().toISOString()}]));notice.textContent='Votre réservation est confirmée.';notice.style.display='block';render();setTimeout(()=>{booking.close();bookingForm.reset()},1100)};
-render();
+bookingForm.onsubmit=async e=>{e.preventDefault();const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';
+ const {error}=await db.rpc('reserve_item',{p_item_id:slotId.value,p_first_name:first.value,p_last_name:last.value,p_email:email.value,p_phone:phone.value});
+ notice.textContent=error?(error.message||'Réservation impossible.'):'Votre réservation est confirmée.';notice.style.display='block';notice.style.background=error?'#f9e9eb':'#edf8f2';notice.style.color=error?'#a22':'#237a57';
+ submit.disabled=false;submit.textContent='Confirmer';if(!error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},1300)}
+};
+loadSlots();setInterval(loadSlots,20000);
 </script>
 </body></html>
