@@ -39,8 +39,9 @@ const when=s=>s.starts_at?fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at):'Date
 function render(){
  Object.values(grids).forEach(g=>g.innerHTML='');
  if(!slots.length){courseGrid.innerHTML='<article class="card"><h3>Planning en préparation</h3><p class="meta">Les prochains créneaux seront bientôt disponibles.</p></article>';return}
- slots.forEach(s=>{const left=s.capacity-Number(s.booked),full=left<=0;const el=document.createElement('article');el.className='card';
- el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div><div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div><button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':'Réserver cette place')+'</button>';
+ slots.forEach(s=>{const flexible=!s.starts_at,left=s.capacity-Number(s.booked),full=!flexible&&left<=0;const el=document.createElement('article');el.className='card';
+ const availability=flexible?'<div class="places">Sur rendez-vous</div>':'<div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div>';
+ el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div>'+availability+'<button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':flexible?'Demander ce bilan':'Réserver cette place')+'</button>';
  grids[s.category].append(el)});document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id))
 }
 async function loadSlots(){const {data,error}=await db.rpc('list_available_items');if(error){console.error(error);slots=[]}else slots=data||[];render()}
