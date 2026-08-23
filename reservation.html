@@ -1,0 +1,48 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="theme-color" content="#5F123F"><title>Réservations · EMPOWERFIT</title>
+<style>
+:root{--p:#5F123F;--b:#F7F1E5;--i:#1d1017;--g:#C7A667;--w:#fff;--ok:#237a57;--mut:#756b70}
+*{box-sizing:border-box}body{margin:0;background:var(--b);color:var(--i);font-family:Inter,system-ui,sans-serif}button,input,select{font:inherit}
+header{background:var(--p);color:#fff;padding:18px 5%;position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px}header img{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:50%}header b{letter-spacing:.12em}header small{display:block;opacity:.8;margin-top:3px}.home{color:#fff;text-decoration:none;border:1px solid #ffffff66;padding:9px 13px;border-radius:99px}
+main{max-width:1050px;margin:auto;padding:34px 18px 70px}.hero{text-align:center;max-width:720px;margin:auto auto 28px}.eyebrow{color:var(--p);font-size:.75rem;font-weight:800;letter-spacing:.18em}.hero h1{font-family:Georgia,serif;color:var(--p);font-size:clamp(2rem,6vw,3.7rem);margin:.35em 0 .25em}.hero p{line-height:1.6;color:var(--mut)}
+.tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:25px 0}.tab{border:1px solid #5f123f33;background:#fff;color:var(--p);padding:11px 18px;border-radius:99px;font-weight:750;cursor:pointer}.tab.active{background:var(--p);color:#fff}
+.panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 8px 28px #3a172112;border:1px solid #5f123f12}.card h3{margin:6px 0;color:var(--p);font-family:Georgia,serif;font-size:1.35rem}.meta{color:var(--mut);line-height:1.6}.places{display:inline-flex;margin:13px 0;padding:7px 11px;border-radius:99px;background:#edf8f2;color:var(--ok);font-weight:800;font-size:.82rem}.places.full{background:#f9e9eb;color:#a22}.book{width:100%;border:0;border-radius:12px;padding:12px;background:var(--p);color:#fff;font-weight:800;cursor:pointer}.book:disabled{background:#aaa}
+dialog{border:0;border-radius:22px;padding:0;max-width:500px;width:calc(100% - 28px);box-shadow:0 28px 90px #190b1466}dialog::backdrop{background:#190b1499}.modal{padding:25px}.modal h2{color:var(--p);font-family:Georgia,serif;margin-top:0}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:.82rem;font-weight:800}.field input,.field select{width:100%;padding:12px;border:1px solid #d8cbd1;border-radius:10px}.actions{display:flex;gap:10px;margin-top:18px}.cancel{border:1px solid #ccc;background:#fff;color:#333}.notice{padding:12px;border-radius:10px;background:#edf8f2;color:var(--ok);display:none;margin-top:13px}.fine{font-size:.76rem;color:var(--mut);line-height:1.5}
+footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
+@media(max-width:560px){header small{display:none}.home{font-size:.78rem}main{padding-top:24px}}
+</style>
+</head>
+<body>
+<header><div style="display:flex;align-items:center;gap:12px"><img src="logo-simple-prune.png.png" alt=""><div><b>EMPOWERFIT</b><small>Force & longévité féminine · Aix-en-Provence</small></div></div><a class="home" href="index.html">Accueil</a></header>
+<main>
+<section class="hero"><div class="eyebrow">VOTRE ESPACE DE RÉSERVATION</div><h1>Choisissez votre moment.</h1><p>Réservez un cours, votre bilan obligatoire ou un événement EMPOWERFIT. Les places disponibles sont mises à jour automatiquement.</p></section>
+<nav class="tabs" aria-label="Types de réservation"><button class="tab active" data-tab="cours">Cours</button><button class="tab" data-tab="bilans">Bilans</button><button class="tab" data-tab="events">Événements</button></nav>
+<section id="cours" class="panel active"><div class="grid" id="courseGrid"></div></section>
+<section id="bilans" class="panel"><div class="grid" id="bilanGrid"></div></section>
+<section id="events" class="panel"><div class="grid" id="eventGrid"></div></section>
+</main>
+<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail</label><input id="email" required type="email" autocomplete="email"></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" autocomplete="tel"></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="close">Annuler</button><button class="book" type="submit">Confirmer</button></div></form></dialog>
+<footer>EMPOWERFIT STUDIO · Un studio pensé pour les femmes de 30 ans et plus.</footer>
+<script>
+const initial=[
+{id:'c1',type:'cours',title:'Power Fit',day:'Lundi',time:'17 h 30',duration:'50 min',capacity:14,booked:5},
+{id:'c2',type:'cours',title:'Power Pilates',day:'Lundi',time:'18 h 30',duration:'50 min',capacity:14,booked:8},
+{id:'c3',type:'cours',title:'Power Yoga',day:'Mardi',time:'18 h 30',duration:'50 min',capacity:14,booked:3},
+{id:'c4',type:'cours',title:'Power Full',day:'Samedi',time:'10 h 00',duration:'1 h 30',capacity:12,booked:7},
+{id:'b1',type:'bilans',title:'Bilan initial obligatoire',day:'Mercredi',time:'14 h 00',duration:'45 min',capacity:1,booked:0},
+{id:'b2',type:'bilans',title:'Bilan initial obligatoire',day:'Vendredi',time:'12 h 30',duration:'45 min',capacity:1,booked:0},
+{id:'e1',type:'events',title:'Atelier Force & longévité',day:'Samedi 19 septembre',time:'14 h 00',duration:'2 h',capacity:10,booked:2}
+];
+let slots=JSON.parse(localStorage.getItem('empowerfit_slots')||'null')||initial;
+const grids={cours:courseGrid,bilans:bilanGrid,events:eventGrid};
+function render(){Object.values(grids).forEach(g=>g.innerHTML='');slots.forEach(s=>{const left=s.capacity-s.booked,full=left<=0;const el=document.createElement('article');el.className='card';el.innerHTML='<div class="eyebrow">'+(s.type==='cours'?'COURS':s.type==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+s.day+' · '+s.time+'<br>'+s.duration+'</div><div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div><button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':'Réserver cette place')+'</button>';grids[s.type].append(el)});document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id))}
+function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=s.day+' · '+s.time+' · '+s.duration;notice.style.display='none';booking.showModal()}
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
+close.onclick=()=>booking.close();
+bookingForm.onsubmit=e=>{e.preventDefault();const s=slots.find(x=>x.id===slotId.value);if(!s||s.booked>=s.capacity)return;s.booked++;localStorage.setItem('empowerfit_slots',JSON.stringify(slots));localStorage.setItem('empowerfit_bookings',JSON.stringify([...(JSON.parse(localStorage.getItem('empowerfit_bookings')||'[]')),{slot:s.id,first:first.value,last:last.value,email:email.value,phone:phone.value,created:new Date().toISOString()}]));notice.textContent='Votre réservation est confirmée.';notice.style.display='block';render();setTimeout(()=>{booking.close();bookingForm.reset()},1100)};
+render();
+</script>
+</body></html>
