@@ -33,22 +33,23 @@ const SUPABASE_KEY='sb_publishable_E_9CcWp8K5VJHxe2rGjJew_p9pmd-u9';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let slots=[];
 const grids={cours:courseGrid,bilans:bilanGrid,events:eventGrid};
-const fmtDate=v=>new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Paris'}).format(new Date(v));
-const fmtTime=v=>new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'}).format(new Date(v)).replace(':',' h ');
+const fmtDate=v=>v?new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Paris'}).format(new Date(v)):'Date à convenir avec vous';
+const fmtTime=v=>v?new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'}).format(new Date(v)).replace(':',' h '):'';
+const when=s=>s.starts_at?fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at):'Date à convenir avec vous';
 function render(){
  Object.values(grids).forEach(g=>g.innerHTML='');
  if(!slots.length){courseGrid.innerHTML='<article class="card"><h3>Planning en préparation</h3><p class="meta">Les prochains créneaux seront bientôt disponibles.</p></article>';return}
  slots.forEach(s=>{const left=s.capacity-Number(s.booked),full=left<=0;const el=document.createElement('article');el.className='card';
- el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div><div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div><button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':'Réserver cette place')+'</button>';
+ el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div><div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div><button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':'Réserver cette place')+'</button>';
  grids[s.category].append(el)});document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id))
 }
 async function loadSlots(){const {data,error}=await db.rpc('list_available_items');if(error){console.error(error);slots=[]}else slots=data||[];render()}
-function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at)+' · '+s.duration_minutes+' min';notice.style.display='none';booking.showModal()}
+function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';notice.style.display='none';booking.showModal()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
 close.onclick=()=>booking.close();
 bookingForm.onsubmit=async e=>{e.preventDefault();const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';
  const {error}=await db.rpc('reserve_item',{p_item_id:slotId.value,p_first_name:first.value,p_last_name:last.value,p_email:email.value,p_phone:phone.value});
- notice.textContent=error?(error.message||'Réservation impossible.'):'Votre réservation est confirmée.';notice.style.display='block';notice.style.background=error?'#f9e9eb':'#edf8f2';notice.style.color=error?'#a22':'#237a57';
+ const chosen=slots.find(x=>x.id===slotId.value);notice.textContent=error?(error.message||'Réservation impossible.'):(chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');notice.style.display='block';notice.style.background=error?'#f9e9eb':'#edf8f2';notice.style.color=error?'#a22':'#237a57';
  submit.disabled=false;submit.textContent='Confirmer';if(!error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
 loadSlots();setInterval(loadSlots,20000);
