@@ -8,37 +8,76 @@
 *{box-sizing:border-box}body{margin:0;background:var(--b);color:var(--i);font-family:Inter,system-ui,sans-serif}button,input,select{font:inherit}
 header{background:var(--p);color:#fff;padding:18px 5%;position:sticky;top:0;z-index:5;display:flex;align-items:center;justify-content:space-between;gap:16px}header img{width:52px;height:52px;object-fit:contain;background:#fff;border-radius:50%}header b{letter-spacing:.12em}header small{display:block;opacity:.8;margin-top:3px}.home{color:#fff;text-decoration:none;border:1px solid #ffffff66;padding:9px 13px;border-radius:99px}
 main{max-width:1050px;margin:auto;padding:34px 18px 70px}.hero{text-align:center;max-width:720px;margin:auto auto 28px}.eyebrow{color:var(--p);font-size:.75rem;font-weight:800;letter-spacing:.18em}.hero h1{font-family:Georgia,serif;color:var(--p);font-size:clamp(2rem,6vw,3.7rem);margin:.35em 0 .25em}.hero p{line-height:1.6;color:var(--mut)}
+
+.hidden{display:none!important}.location-tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0 22px}.location-tab{border:1px solid #5f123f33;background:#fff;color:var(--p);padding:9px 16px;border-radius:99px;font-weight:800;cursor:pointer}.location-tab.active{background:var(--i);color:#fff}.slot-title{font-family:Georgia,serif;color:var(--p);margin:30px 0 14px}.context-note{max-width:760px;margin:12px auto 24px;padding:15px;border:1px dashed #5f123f55;border-radius:14px;text-align:center;color:var(--mut);background:#fff8}.compact-offers{max-width:760px;margin-inline:auto}
 .offers{margin:34px 0 44px}.section-title{text-align:center;color:var(--p);font-family:Georgia,serif;font-size:clamp(1.8rem,4vw,2.7rem);margin:0 0 8px}.section-intro{text-align:center;color:var(--mut);max-width:720px;margin:0 auto 22px;line-height:1.55}.offer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:15px}.offer{background:#fff;border-radius:18px;padding:20px;box-shadow:0 8px 28px #3a172112;border:1px solid #5f123f12;display:flex;flex-direction:column}.offer h3{color:var(--p);font-family:Georgia,serif;font-size:1.35rem;margin:7px 0}.offer .price{font-size:1.65rem;font-weight:900;color:var(--i);margin:3px 0 10px}.offer .price small{font-size:.8rem;color:var(--mut);font-weight:700}.offer ul{margin:0 0 18px;padding-left:19px;color:var(--mut);line-height:1.55;font-size:.9rem;flex:1}.pay{display:block;text-align:center;text-decoration:none;border-radius:12px;padding:12px;background:var(--p);color:#fff;font-weight:850}.pay:hover{filter:brightness(1.08)}.terms{margin:18px auto 0;padding:14px 16px;max-width:900px;border-radius:14px;background:#fff8;border:1px solid #5f123f1c;color:var(--mut);font-size:.78rem;line-height:1.55}
 .tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:25px 0}.tab{border:1px solid #5f123f33;background:#fff;color:var(--p);padding:11px 18px;border-radius:99px;font-weight:750;cursor:pointer}.tab.active{background:var(--p);color:#fff}
 .panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 8px 28px #3a172112;border:1px solid #5f123f12}.card h3{margin:6px 0;color:var(--p);font-family:Georgia,serif;font-size:1.35rem}.meta{color:var(--mut);line-height:1.6}.places{display:inline-flex;margin:13px 0;padding:7px 11px;border-radius:99px;background:#edf8f2;color:var(--ok);font-weight:800;font-size:.82rem}.places.full{background:#f9e9eb;color:#a22}.book{width:100%;border:0;border-radius:12px;padding:12px;background:var(--p);color:#fff;font-weight:800;cursor:pointer}.book:disabled{background:#aaa}
 dialog{border:0;border-radius:22px;padding:0;max-width:500px;width:calc(100% - 28px);box-shadow:0 28px 90px #190b1466}dialog::backdrop{background:#190b1499}.modal{padding:25px}.modal h2{color:var(--p);font-family:Georgia,serif;margin-top:0}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:.82rem;font-weight:800}.field input,.field select{width:100%;padding:12px;border:1px solid #d8cbd1;border-radius:10px}.actions{display:flex;gap:10px;margin-top:18px}.cancel{border:1px solid #ccc;background:#fff;color:#333}.notice{padding:15px;border-radius:12px;background:#edf8f2;color:var(--ok);display:none;margin-top:15px;font-weight:800;text-align:center;border:1px solid #237a5733}.fine{font-size:.76rem;color:var(--mut);line-height:1.5}
 footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
-@media(max-width:560px){header small{display:none}.home{font-size:.78rem}main{padding-top:24px}}
+@media(max-width:560px){header small{display:none}.home{font-size:.78rem}main{padding-top:24px}.tabs{gap:6px}.tab{padding:10px 12px;font-size:.88rem}.location-tab{padding:9px 14px}}
 </style>
 </head>
 <body>
 <header><div style="display:flex;align-items:center;gap:12px"><img src="logo-simple-prune.png.png" alt=""><div><b>EMPOWERFIT</b><small>Force & longévité féminine · Aix-en-Provence</small></div></div><a class="home" href="index.html">Accueil</a></header>
 <main>
-<section class="hero"><div class="eyebrow">VOTRE ESPACE DE RÉSERVATION</div><h1>Choisissez votre moment.</h1><p>Réservez un cours, votre bilan obligatoire ou un événement EMPOWERFIT. Les places disponibles sont mises à jour automatiquement.</p></section>
-<section class="offers" id="offres">
-<h2 class="section-title">Offres EMPOWERFIT Brignoles</h2>
-<p class="section-intro">Choisissez votre formule puis réglez en toute sécurité sur Stripe. Pour les cours et les bilans, sélectionnez ensuite votre créneau dans le planning.</p>
-<div class="offer-grid">
-<article class="offer"><div class="eyebrow">ANNÉE SCOLAIRE</div><h3>START TEN</h3><div class="price">75 € <small>/ mois</small></div><ul><li>2 séances par semaine</li><li>De septembre à juin</li><li>Dernier prélèvement en juin</li></ul><a class="pay" href="https://buy.stripe.com/7sY3cu6ST4W68jS9X963K0d" target="_blank" rel="noopener">Choisir START TEN</a></article>
-<article class="offer"><div class="eyebrow">ABONNEMENT</div><h3>SERENITY</h3><div class="price">60 € <small>/ mois</small></div><ul><li>1 séance par semaine</li><li>POWERFULL à 10 €</li><li>Sans accès Recovery Room</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/cNi8wO2CD2NYfMk5GT63K0a" target="_blank" rel="noopener">Choisir SERENITY</a></article>
-<article class="offer"><div class="eyebrow">ABONNEMENT</div><h3>BALANCE</h3><div class="price">80 € <small>/ mois</small></div><ul><li>2 séances par semaine</li><li>POWERFULL à 5 €</li><li>2 accès Recovery Room par mois</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/bJebJ0dhh4W61Vu6KX63K0b" target="_blank" rel="noopener">Choisir BALANCE</a></article>
-<article class="offer"><div class="eyebrow">ABONNEMENT</div><h3>INFINITY</h3><div class="price">90 € <small>/ mois</small></div><ul><li>POWERFULL inclus</li><li>4 accès Recovery Room par mois</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/dRm4gy7WX1JUgQo8T563K0f" target="_blank" rel="noopener">Choisir INFINITY</a></article>
-<article class="offer"><div class="eyebrow">DÉCOUVERTE</div><h3>Séance d’essai</h3><div class="price">20 €</div><ul><li>Une séance à Brignoles</li><li>Paiement unique</li></ul><a class="pay" href="https://buy.stripe.com/14A8wO3GH2NY57G8T563K09" target="_blank" rel="noopener">Réserver mon essai</a></article>
-<article class="offer"><div class="eyebrow">LIBERTÉ</div><h3>Carte 10 cours</h3><div class="price">150 €</div><ul><li>10 cours à Brignoles</li><li>Carte nominative</li><li>Valable 3 mois</li></ul><a class="pay" href="https://buy.stripe.com/6oU9ASb990FQbw44CP63K08" target="_blank" rel="noopener">Acheter la carte</a></article>
-<article class="offer"><div class="eyebrow">BILAN</div><h3>Bilan visio</h3><div class="price">45 €</div><ul><li>45 minutes</li><li>À distance</li><li>Paiement unique</li></ul><a class="pay" href="https://buy.stripe.com/cNicN4911agq57G2uH63K07" target="_blank" rel="noopener">Choisir le bilan visio</a></article>
-<article class="offer"><div class="eyebrow">BILAN</div><h3>Bilan physique</h3><div class="price">60 €</div><ul><li>60 minutes</li><li>À Brignoles</li><li>Paiement unique</li></ul><a class="pay" href="https://buy.stripe.com/cNi5kC6STdsC9nW7P163K0e" target="_blank" rel="noopener">Choisir le bilan physique</a></article>
-</div>
-<p class="terms">SERENITY, BALANCE et INFINITY : engagement initial de 12 mois, puis reconduction tacite. Résiliation possible ensuite avec un mois de préavis. START TEN prend fin après le dernier prélèvement de juin.</p>
+<section class="hero"><div class="eyebrow">VOTRE ESPACE DE RÉSERVATION</div><h1>Choisissez votre moment.</h1><p>Choisissez d’abord votre expérience, puis votre lieu. Les offres et créneaux correspondants s’affichent automatiquement.</p></section>
+
+<nav class="tabs" aria-label="Types de réservation">
+<button class="tab active" data-tab="events">Événements</button>
+<button class="tab" data-tab="bilans">Bilans</button>
+<button class="tab" data-tab="cours">Cours & offres</button>
+</nav>
+
+<section id="events" class="panel active">
+<h2 class="section-title">Événements EMPOWERFIT</h2>
+<p class="section-intro">Choisissez la ville pour découvrir les prochains rendez-vous.</p>
+<nav class="location-tabs" data-group="events" aria-label="Lieu des événements">
+<button class="location-tab active" data-location="aix">Aix</button>
+<button class="location-tab" data-location="brignoles">Brignoles</button>
+</nav>
+<div class="context-note" data-empty-offers="events">Les liens des événements seront ajoutés dès leur ouverture.</div>
+<h2 class="slot-title">Dates disponibles</h2>
+<div class="grid" id="eventGrid"></div>
 </section>
-<nav class="tabs" aria-label="Types de réservation"><button class="tab active" data-tab="cours">Cours</button><button class="tab" data-tab="bilans">Bilans</button><button class="tab" data-tab="events">Événements</button></nav>
-<section id="cours" class="panel active"><div class="grid" id="courseGrid"></div></section>
-<section id="bilans" class="panel"><div class="grid" id="bilanGrid"></div></section>
-<section id="events" class="panel"><div class="grid" id="eventGrid"></div></section>
+
+<section id="bilans" class="panel">
+<h2 class="section-title">Votre bilan EMPOWERFIT</h2>
+<p class="section-intro">Choisissez le format qui vous convient, réglez sur Stripe puis sélectionnez votre créneau avec la même adresse e-mail.</p>
+<nav class="location-tabs" data-group="bilans" aria-label="Lieu des bilans">
+<button class="location-tab active" data-location="brignoles">Brignoles</button>
+<button class="location-tab" data-location="aix">Aix</button>
+<button class="location-tab" data-location="visio">En visio</button>
+</nav>
+<div class="offer-grid compact-offers">
+<article class="offer" data-offer-category="bilans" data-offer-location="brignoles"><div class="eyebrow">BILAN PHYSIQUE</div><h3>À Brignoles</h3><div class="price">60 €</div><ul><li>60 minutes</li><li>Paiement unique</li></ul><a class="pay" href="https://buy.stripe.com/cNi5kC6STdsC9nW7P163K0e" target="_blank" rel="noopener">Choisir le bilan physique</a></article>
+<article class="offer hidden" data-offer-category="bilans" data-offer-location="visio"><div class="eyebrow">BILAN VISIO</div><h3>À distance</h3><div class="price">45 €</div><ul><li>45 minutes</li><li>Paiement unique</li></ul><a class="pay" href="https://buy.stripe.com/cNicN4911agq57G2uH63K07" target="_blank" rel="noopener">Choisir le bilan visio</a></article>
+</div>
+<div class="context-note hidden" data-empty-offers="bilans">L’offre de bilan pour ce lieu sera bientôt disponible.</div>
+<h2 class="slot-title">Créneaux disponibles</h2>
+<div class="grid" id="bilanGrid"></div>
+</section>
+
+<section id="cours" class="panel">
+<h2 class="section-title">Cours & offres</h2>
+<p class="section-intro">Choisissez votre ville, puis votre formule. Après le paiement, réservez vos cours avec la même adresse e-mail.</p>
+<nav class="location-tabs" data-group="cours" aria-label="Lieu des cours">
+<button class="location-tab active" data-location="brignoles">Brignoles</button>
+<button class="location-tab" data-location="aix">Aix</button>
+</nav>
+<div class="offer-grid">
+<article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">ANNÉE SCOLAIRE</div><h3>START TEN</h3><div class="price">75 € <small>/ mois</small></div><ul><li>2 séances par semaine</li><li>De septembre à juin</li><li>Dernier prélèvement en juin</li></ul><a class="pay" href="https://buy.stripe.com/7sY3cu6ST4W68jS9X963K0d" target="_blank" rel="noopener">Choisir START TEN</a></article>
+<article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">ABONNEMENT</div><h3>SERENITY</h3><div class="price">60 € <small>/ mois</small></div><ul><li>1 séance par semaine</li><li>POWERFULL à 10 €</li><li>Sans accès Recovery Room</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/cNi8wO2CD2NYfMk5GT63K0a" target="_blank" rel="noopener">Choisir SERENITY</a></article>
+<article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">ABONNEMENT</div><h3>BALANCE</h3><div class="price">80 € <small>/ mois</small></div><ul><li>2 séances par semaine</li><li>POWERFULL à 5 €</li><li>2 accès Recovery Room par mois</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/bJebJ0dhh4W61Vu6KX63K0b" target="_blank" rel="noopener">Choisir BALANCE</a></article>
+<article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">ABONNEMENT</div><h3>INFINITY</h3><div class="price">90 € <small>/ mois</small></div><ul><li>POWERFULL inclus</li><li>4 accès Recovery Room par mois</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/dRm4gy7WX1JUgQo8T563K0f" target="_blank" rel="noopener">Choisir INFINITY</a></article>
+<article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">DÉCOUVERTE</div><h3>Séance d’essai</h3><div class="price">20 €</div><ul><li>Une séance à Brignoles</li><li>Paiement unique</li></ul><a class="pay" href="https://buy.stripe.com/14A8wO3GH2NY57G8T563K09" target="_blank" rel="noopener">Réserver mon essai</a></article>
+<article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">LIBERTÉ</div><h3>Carte 10 cours</h3><div class="price">150 €</div><ul><li>10 cours à Brignoles</li><li>Carte nominative</li><li>Valable 3 mois</li></ul><a class="pay" href="https://buy.stripe.com/6oU9ASb990FQbw44CP63K08" target="_blank" rel="noopener">Acheter la carte</a></article>
+</div>
+<div class="context-note hidden" data-empty-offers="cours">Les offres de cours à Aix seront ajoutées prochainement.</div>
+<p class="terms" data-terms-location="brignoles">SERENITY, BALANCE et INFINITY : engagement initial de 12 mois, puis reconduction tacite. Résiliation possible ensuite avec un mois de préavis. START TEN prend fin après le dernier prélèvement de juin.</p>
+<h2 class="slot-title">Cours disponibles</h2>
+<div class="grid" id="courseGrid"></div>
+</section>
 </main>
 <dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail utilisé pour votre paiement Stripe</label><input id="email" required type="email" autocomplete="email"><small class="fine">Utilisez exactement la même adresse pour retrouver votre abonnement ou vos crédits.</small></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" autocomplete="tel"></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="close">Annuler</button><button class="book" type="submit">Vérifier et réserver</button></div></form></dialog>
 <footer>EMPOWERFIT STUDIO · Un studio pensé pour les femmes de 30 ans et plus.</footer>
@@ -49,20 +88,38 @@ const SUPABASE_KEY='sb_publishable_E_9CcWp8K5VJHxe2rGjJew_p9pmd-u9';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 let slots=[];
 const grids={cours:courseGrid,bilans:bilanGrid,events:eventGrid};
+const selectedLocations={events:'aix',bilans:'brignoles',cours:'brignoles'};
 const fmtDate=v=>v?new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Paris'}).format(new Date(v)):'Date à convenir avec vous';
 const fmtTime=v=>v?new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'}).format(new Date(v)).replace(':',' h '):'';
 const when=s=>s.starts_at?fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at):'Date à convenir avec vous';
+const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+const slotLocation=s=>s.location||(/visio/i.test(s.title)?'visio':'brignoles');
 function render(){
- Object.values(grids).forEach(g=>g.innerHTML='');
- if(!slots.length){courseGrid.innerHTML='<article class="card"><h3>Planning en préparation</h3><p class="meta">Les prochains créneaux seront bientôt disponibles.</p></article>';return}
- slots.forEach(s=>{const flexible=!s.starts_at,left=s.capacity-Number(s.booked),full=!flexible&&left<=0;const el=document.createElement('article');el.className='card';
- const availability=flexible?'<div class="places">Sur rendez-vous</div>':'<div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div>';
- el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+s.title+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div>'+availability+'<button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':flexible?'Demander ce bilan':'Réserver cette place')+'</button>';
- grids[s.category].append(el)});document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id))
+ Object.entries(grids).forEach(([category,grid])=>{
+  grid.innerHTML='';
+  const visible=slots.filter(s=>s.category===category&&slotLocation(s)===selectedLocations[category]);
+  if(!visible.length){grid.innerHTML='<article class="card"><h3>Planning en préparation</h3><p class="meta">Les prochains créneaux seront bientôt disponibles pour ce lieu.</p></article>';return}
+  visible.forEach(s=>{const flexible=!s.starts_at,left=s.capacity-Number(s.booked),full=!flexible&&left<=0;const el=document.createElement('article');el.className='card';
+   const availability=flexible?'<div class="places">Sur rendez-vous</div>':'<div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div>';
+   el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+esc(s.title)+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div>'+availability+'<button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':flexible?'Demander ce bilan':'Réserver cette place')+'</button>';
+   grid.append(el);
+  });
+ });
+ document.querySelectorAll('[data-id]').forEach(b=>b.onclick=()=>openBooking(b.dataset.id));
+ Object.keys(selectedLocations).forEach(category=>{
+  const location=selectedLocations[category];
+  const offers=[...document.querySelectorAll('[data-offer-category="'+category+'"]')];
+  offers.forEach(card=>card.classList.toggle('hidden',card.dataset.offerLocation!==location));
+  const empty=document.querySelector('[data-empty-offers="'+category+'"]');
+  if(empty)empty.classList.toggle('hidden',offers.some(card=>card.dataset.offerLocation===location));
+ });
+ const terms=document.querySelector('[data-terms-location]');
+ if(terms)terms.classList.toggle('hidden',selectedLocations.cours!==terms.dataset.termsLocation);
 }
-async function loadSlots(){const {data,error}=await db.rpc('list_available_items');if(error){console.error(error);slots=[]}else slots=data||[];render()}
+async function loadSlots(){const {data,error}=await db.rpc('list_available_items_v2');if(error){console.error(error);slots=[]}else slots=data||[];render()}
 function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';notice.style.display='none';booking.showModal()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
+document.querySelectorAll('.location-tab').forEach(b=>b.onclick=()=>{const group=b.closest('[data-group]').dataset.group;selectedLocations[group]=b.dataset.location;b.parentElement.querySelectorAll('.location-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
 close.onclick=()=>booking.close();
 bookingForm.onsubmit=async e=>{e.preventDefault();const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';
  const {error}=await db.rpc('reserve_paid_item',{p_item_id:slotId.value,p_first_name:first.value,p_last_name:last.value,p_email:email.value,p_phone:phone.value});
