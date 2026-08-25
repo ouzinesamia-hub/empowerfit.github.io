@@ -3,6 +3,57 @@
 
 create extension if not exists pgcrypto;
 
+alter table public.bookable_items
+  add column if not exists location text not null default 'brignoles';
+
+do $$
+begin
+  if not exists (
+    select 1 from pg_constraint
+    where conname = 'bookable_items_location_check'
+      and conrelid = 'public.bookable_items'::regclass
+  ) then
+    alter table public.bookable_items
+      add constraint bookable_items_location_check
+      check (location in ('aix', 'brignoles', 'visio'));
+  end if;
+end $$;
+
+update public.bookable_items
+set location = 'visio'
+where category = 'bilans' and title ~* 'visio';
+
+create or replace function public.list_available_items_v2()
+returns table (
+  id uuid,
+  category text,
+  title text,
+  starts_at timestamptz,
+  duration_minutes integer,
+  capacity integer,
+  price_cents integer,
+  location text,
+  booked bigint
+)
+language sql
+security definer
+set search_path = public, pg_temp
+as $$
+  select
+    i.id, i.category, i.title, i.starts_at, i.duration_minutes,
+    i.capacity, i.price_cents, i.location,
+    count(b.id) filter (where b.status = 'confirmed') as booked
+  from public.bookable_items i
+  left join public.bookings b on b.item_id = i.id
+  where i.active = true
+    and (i.starts_at is null or i.starts_at >= now())
+  group by i.id
+  order by i.starts_at nulls last, i.created_at;
+$$;
+
+revoke all on function public.list_available_items_v2() from public;
+grant execute on function public.list_available_items_v2() to anon, authenticated;
+
 create table if not exists public.payment_offers (
   code text primary key,
   title text not null,
@@ -258,4 +309,3 @@ drop trigger if exists restore_credit_after_booking_cancellation on public.booki
 create trigger restore_credit_after_booking_cancellation
 after update of status on public.bookings
 for each row execute function public.restore_booking_credit();
-
