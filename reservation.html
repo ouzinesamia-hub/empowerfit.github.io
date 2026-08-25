@@ -3,6 +3,8 @@
 <head>
 <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
 <meta name="theme-color" content="#5F123F"><title>Réservations · EMPOWERFIT</title>
+<link rel="icon" href="logo-inverse-empowerfit.svg" type="image/svg+xml">
+<link rel="apple-touch-icon" href="logo-inverse-empowerfit.svg">
 <style>
 :root{--p:#5F123F;--b:#F7F1E5;--i:#1d1017;--g:#C7A667;--w:#fff;--ok:#237a57;--mut:#756b70}
 *{box-sizing:border-box}body{margin:0;background:var(--b);color:var(--i);font-family:Inter,system-ui,sans-serif}button,input,select{font:inherit}
@@ -19,7 +21,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 </style>
 </head>
 <body>
-<header><div style="display:flex;align-items:center;gap:12px"><img src="logo-inverse-empowerfit.svg" alt=""><div><b>EMPOWERFIT</b><small>Force & longévité féminine · Aix-en-Provence</small></div></div><a class="home" href="index.html">Accueil</a></header>
+<header><div style="display:flex;align-items:center;gap:12px"><img src="logo-inverse-empowerfit.svg" alt="Logo EMPOWERFIT"><div><b>EMPOWERFIT</b><small>Force & longévité féminine</small></div></div><a class="home" href="index.html">Accueil</a></header>
 <main>
 <section class="hero"><div class="eyebrow">VOTRE ESPACE DE RÉSERVATION</div><h1>Choisissez votre moment.</h1><p>Choisissez d’abord votre expérience, puis votre lieu. Les offres et créneaux correspondants s’affichent automatiquement.</p></section>
 
@@ -42,8 +44,8 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 </section>
 
 <section id="bilans" class="panel">
-<h2 class="section-title">Votre bilan EMPOWERFIT</h2>
-<p class="section-intro">Choisissez le format qui vous convient, réglez sur Stripe puis sélectionnez votre créneau avec la même adresse e-mail.</p>
+<h2 class="section-title">Bilans EMPOWERFIT</h2>
+<p class="section-intro">Les bilans sont facultatifs. Choisissez le format qui vous convient, réglez sur Stripe puis sélectionnez votre créneau avec la même adresse e-mail.</p>
 <nav class="location-tabs" data-group="bilans" aria-label="Lieu des bilans">
 <button class="location-tab active" data-location="brignoles">Brignoles</button>
 <button class="location-tab" data-location="aix">Aix</button>
@@ -79,7 +81,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <div class="grid" id="courseGrid"></div>
 </section>
 </main>
-<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail utilisé pour votre paiement Stripe</label><input id="email" required type="email" autocomplete="email"><small class="fine">Utilisez exactement la même adresse pour retrouver votre abonnement ou vos crédits.</small></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" autocomplete="tel"></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="close">Annuler</button><button class="book" type="submit">Vérifier et réserver</button></div></form></dialog>
+<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail utilisé pour votre paiement Stripe</label><input id="email" required type="email" inputmode="email" autocomplete="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}" title="Saisissez une adresse e-mail complète, par exemple nom@gmail.com."><small class="fine">Utilisez exactement la même adresse pour retrouver votre abonnement ou vos crédits.</small></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" inputmode="tel" autocomplete="tel" pattern="(?:\+33|0033|0)[1-9](?:[ .-]?[0-9]{2}){4}" minlength="10" maxlength="20" title="Saisissez un numéro français valide, par exemple 06 12 34 56 78 ou +33 6 12 34 56 78."><small class="fine">Format accepté : 06 12 34 56 78 ou +33 6 12 34 56 78.</small></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="cancelBooking">Annuler</button><button class="book" type="submit">Vérifier et réserver</button></div></form></dialog>
 <footer>EMPOWERFIT STUDIO · Un studio pensé pour les femmes de 30 ans et plus.</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -116,13 +118,26 @@ function render(){
  const terms=document.querySelector('[data-terms-location]');
  if(terms)terms.classList.toggle('hidden',selectedLocations.cours!==terms.dataset.termsLocation);
 }
-async function loadSlots(){const {data,error}=await db.rpc('list_available_items_v2');if(error){console.error(error);slots=[]}else slots=data||[];render()}
+async function loadSlots(){const {data,error}=await db.rpc('list_available_items_v2');if(error){console.error(error);slots=[]}else slots=(data||[]).filter(x=>x.title?.trim().toLocaleLowerCase('fr-FR')!=='bilan initial obligatoire');render()}
 function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';notice.style.display='none';booking.showModal()}
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
 document.querySelectorAll('.location-tab').forEach(b=>b.onclick=()=>{const group=b.closest('[data-group]').dataset.group;selectedLocations[group]=b.dataset.location;b.parentElement.querySelectorAll('.location-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
-close.onclick=()=>booking.close();
-bookingForm.onsubmit=async e=>{e.preventDefault();const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';
- const {error}=await db.rpc('reserve_paid_item',{p_item_id:slotId.value,p_first_name:first.value,p_last_name:last.value,p_email:email.value,p_phone:phone.value});
+const cancelBooking=document.getElementById('cancelBooking');
+function closeBooking(){booking.close();bookingForm.reset();notice.style.display='none'}
+cancelBooking.addEventListener('click',closeBooking);
+booking.addEventListener('click',e=>{if(e.target===booking)closeBooking()});
+bookingForm.onsubmit=async e=>{e.preventDefault();
+ const emailValue=email.value.trim().toLowerCase();
+ const phoneValue=phone.value.trim();
+ const emailValid=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailValue);
+ const phoneValid=/^(?:\+33|0033|0)[1-9](?:[ .-]?[0-9]{2}){4}$/.test(phoneValue);
+ if(!emailValid||!phoneValid){
+   notice.textContent=!emailValid?'Saisissez une adresse e-mail complète et valide.':'Saisissez un numéro français valide.';
+   notice.style.display='block';notice.style.background='#f9e9eb';notice.style.color='#a22';
+   (!emailValid?email:phone).focus();return;
+ }
+ const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';
+ const {error}=await db.rpc('reserve_paid_item',{p_item_id:slotId.value,p_first_name:first.value.trim(),p_last_name:last.value.trim(),p_email:emailValue,p_phone:phoneValue});
  const chosen=slots.find(x=>x.id===slotId.value);notice.textContent=error?(error.message||'Réservation impossible.'):(chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');notice.style.display='block';notice.style.background=error?'#f9e9eb':'#edf8f2';notice.style.color=error?'#a22':'#237a57';
  submit.disabled=false;submit.textContent='Vérifier et réserver';if(!error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
