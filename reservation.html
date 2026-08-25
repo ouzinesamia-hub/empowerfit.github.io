@@ -40,7 +40,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <section id="bilans" class="panel"><div class="grid" id="bilanGrid"></div></section>
 <section id="events" class="panel"><div class="grid" id="eventGrid"></div></section>
 </main>
-<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail</label><input id="email" required type="email" autocomplete="email"></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" autocomplete="tel"></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="close">Annuler</button><button class="book" type="submit">Confirmer</button></div></form></dialog>
+<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail utilisé pour votre paiement Stripe</label><input id="email" required type="email" autocomplete="email"><small class="fine">Utilisez exactement la même adresse pour retrouver votre abonnement ou vos crédits.</small></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" autocomplete="tel"></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="close">Annuler</button><button class="book" type="submit">Vérifier et réserver</button></div></form></dialog>
 <footer>EMPOWERFIT STUDIO · Un studio pensé pour les femmes de 30 ans et plus.</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
@@ -65,9 +65,9 @@ function openBooking(id){const s=slots.find(x=>x.id===id);slotId.value=id;modalT
 document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
 close.onclick=()=>booking.close();
 bookingForm.onsubmit=async e=>{e.preventDefault();const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';
- const {error}=await db.rpc('reserve_item',{p_item_id:slotId.value,p_first_name:first.value,p_last_name:last.value,p_email:email.value,p_phone:phone.value});
+ const {error}=await db.rpc('reserve_paid_item',{p_item_id:slotId.value,p_first_name:first.value,p_last_name:last.value,p_email:email.value,p_phone:phone.value});
  const chosen=slots.find(x=>x.id===slotId.value);notice.textContent=error?(error.message||'Réservation impossible.'):(chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');notice.style.display='block';notice.style.background=error?'#f9e9eb':'#edf8f2';notice.style.color=error?'#a22':'#237a57';
- submit.disabled=false;submit.textContent='Confirmer';if(!error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
+ submit.disabled=false;submit.textContent='Vérifier et réserver';if(!error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
 loadSlots();setInterval(loadSlots,20000);
 </script>
