@@ -38,7 +38,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <button class="location-tab active" data-location="aix">Aix</button>
 <button class="location-tab" data-location="brignoles">Brignoles</button>
 </nav>
-<div class="context-note">Pour participer : payez d’abord votre place sur Stripe, puis revenez confirmer la réservation avec la même adresse e-mail.</div>
+<div class="context-note">Pour un événement payant, réglez d’abord votre place sur Stripe puis confirmez la réservation avec la même adresse e-mail. Les événements gratuits se réservent directement.</div>
 <h2 class="slot-title">Dates disponibles</h2>
 <div class="grid" id="eventGrid"></div>
 </section>
@@ -110,8 +110,9 @@ function render(){
   if(!visible.length){grid.innerHTML='<article class="card"><h3>Planning en préparation</h3><p class="meta">Les prochains créneaux seront bientôt disponibles pour ce lieu.</p></article>';return}
   visible.forEach(s=>{const flexible=!s.starts_at,left=s.capacity-Number(s.booked),full=!flexible&&left<=0;const el=document.createElement('article');el.className='card';
    const availability=flexible?'<div class="places">Sur rendez-vous</div>':'<div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div>';
-   const bookingButton='<button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':flexible?'Demander ce bilan':s.category==='events'?'2. J’ai payé, réserver':'Réserver cette place')+'</button>';
-   const actions=s.category==='events'?'<div class="event-actions">'+(s.payment_link_url?'<a class="pay" href="'+esc(s.payment_link_url)+'" target="_blank" rel="noopener">1. Payer ma place</a>':'<button class="book" disabled>Paiement bientôt disponible</button>')+bookingButton+'</div><p class="event-help">Utilisez la même adresse e-mail pour le paiement et la réservation.</p>':bookingButton;
+   const paidEvent=s.category==='events'&&Number(s.price_cents)>0;
+   const bookingButton='<button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':flexible?'Demander ce bilan':s.category==='events'?(paidEvent?'2. J’ai payé, réserver':'Réserver gratuitement'):'Réserver cette place')+'</button>';
+   const actions=s.category==='events'?(paidEvent?'<div class="event-actions">'+(s.payment_link_url?'<a class="pay" href="'+esc(s.payment_link_url)+'" target="_blank" rel="noopener">1. Payer ma place</a>':'<button class="book" disabled>Paiement bientôt disponible</button>')+bookingButton+'</div><p class="event-help">Utilisez la même adresse e-mail pour le paiement et la réservation.</p>':bookingButton+'<p class="event-help">Cet événement est gratuit, aucun paiement n’est nécessaire.</p>'):bookingButton;
    el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+esc(s.title)+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div>'+availability+actions;
    grid.append(el);
   });
