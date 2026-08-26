@@ -104,6 +104,16 @@ async function patchEvent(eventId: string, body: Record<string, unknown>) {
   return response
 }
 
+async function deleteEvent(eventId: string) {
+  const response = await googleRequest(`events/${encodeURIComponent(eventId)}`, {
+    method: 'DELETE',
+  })
+  if (!response.ok && response.status !== 404 && response.status !== 410) {
+    console.error(await response.text())
+    throw new Error(`Suppression Google Agenda impossible (${response.status}).`)
+  }
+}
+
 async function syncItem(db: any, itemId: string) {
   const { data: item, error: itemError } = await db
     .from('bookable_items')
@@ -187,13 +197,9 @@ export default {
 
       if (table === 'bookable_items' && type === 'DELETE') {
         if (oldRecord?.google_event_id) {
-          await patchEvent(oldRecord.google_event_id, {
-            summary: `Créneau supprimé · ${oldRecord.title || 'EMPOWERFIT'}`,
-            description: 'Ce créneau a été supprimé dans l’administration EMPOWERFIT.',
-            transparency: 'transparent',
-          })
+          await deleteEvent(oldRecord.google_event_id)
         }
-        return json({ received: true, action: 'marqué supprimé' })
+        return json({ received: true, action: 'supprimé de Google Agenda' })
       }
 
       const ids = new Set<string>()
