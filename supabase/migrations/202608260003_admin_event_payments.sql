@@ -11,7 +11,9 @@ where i.category = 'events'
   and o.credit_scope = 'event:' || i.id::text
   and i.payment_link_url is distinct from o.payment_link_url;
 
-create or replace function public.list_available_items_v2()
+drop function if exists public.list_available_items_v2();
+
+create function public.list_available_items_v2()
 returns table (
   id uuid,
   category text,
