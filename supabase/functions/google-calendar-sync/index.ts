@@ -92,8 +92,13 @@ async function googleRequest(path: string, init: RequestInit = {}) {
 const placeLabel = (value: string | null) =>
   value === 'aix' ? 'Aix-en-Provence' : value === 'visio' ? 'En visio' : 'Brignoles'
 
-async function patchEvent(eventId: string, body: Record<string, unknown>) {
-  const response = await googleRequest(`events/${encodeURIComponent(eventId)}`, {
+async function patchEvent(
+  eventId: string,
+  body: Record<string, unknown>,
+  conferenceDataVersion = false,
+) {
+  const suffix = conferenceDataVersion ? '?conferenceDataVersion=1' : ''
+  const response = await googleRequest(`events/${encodeURIComponent(eventId)}${suffix}`, {
     method: 'PATCH',
     body: JSON.stringify(body),
   })
@@ -114,10 +119,32 @@ async function deleteEvent(eventId: string) {
   }
 }
 
+const delay = (milliseconds: number) =>
+  new Promise((resolve) => setTimeout(resolve, milliseconds))
+
+function extractMeetUrl(event: any) {
+  const video = event?.conferenceData?.entryPoints?.find(
+    (entry: any) => entry?.entryPointType === 'video' && typeof entry?.uri === 'string',
+  )
+  return video?.uri || (typeof event?.hangoutLink === 'string' ? event.hangoutLink : null)
+}
+
+async function waitForMeetUrl(eventId: string) {
+  for (let attempt = 0; attempt < 5; attempt += 1) {
+    if (attempt) await delay(attempt * 500)
+    const response = await googleRequest(`events/${encodeURIComponent(eventId)}`)
+    if (!response.ok) continue
+    const event = await response.json()
+    const url = extractMeetUrl(event)
+    if (url) return url
+  }
+  return null
+}
+
 async function syncItem(db: any, itemId: string) {
   const { data: item, error: itemError } = await db
     .from('bookable_items')
-    .select('id,title,starts_at,duration_minutes,capacity,location,google_event_id')
+    .select('id,title,starts_at,duration_minutes,capacity,location,google_event_id,google_meet_url')
     .eq('id', itemId)
     .maybeSingle()
   if (itemError) throw itemError
@@ -135,7 +162,8 @@ async function syncItem(db: any, itemId: string) {
 
   const start = new Date(item.starts_at)
   const end = new Date(start.getTime() + Number(item.duration_minutes) * 60_000)
-  const event = {
+  const needsMeet = item.location === 'visio' && booked > 0
+  const event: Record<string, unknown> = {
     summary: booked
       ? `${item.title} · ${booked}/${item.capacity}`
       : `Sans inscription · ${item.title}`,
@@ -149,29 +177,92 @@ async function syncItem(db: any, itemId: string) {
     extendedProperties: { private: { empowerfit_item_id: item.id } },
   }
 
+  let requestedMeet = false
+  let clearingMeet = false
+  if (needsMeet && !item.google_meet_url) {
+    event.conferenceData = {
+      createRequest: {
+        requestId: `empowerfit-${item.id}-${crypto.randomUUID()}`,
+        conferenceSolutionKey: { type: 'hangoutsMeet' },
+      },
+    }
+    requestedMeet = true
+  } else if (!needsMeet && item.google_meet_url) {
+    event.conferenceData = null
+    clearingMeet = true
+  }
+
   if (item.google_event_id) {
-    const response = await patchEvent(item.google_event_id, event)
-    if (response.ok) return { itemId, action: 'mis à jour' }
+    let response: Response
+    try {
+      response = await patchEvent(
+        item.google_event_id,
+        event,
+        requestedMeet || clearingMeet,
+      )
+    } catch (error) {
+      if (!requestedMeet) throw error
+      delete event.conferenceData
+      requestedMeet = false
+      response = await patchEvent(item.google_event_id, event)
+    }
+
+    if (response.ok) {
+      let meetUrl = item.google_meet_url || null
+      if (requestedMeet) meetUrl = await waitForMeetUrl(item.google_event_id)
+      if (!needsMeet) meetUrl = null
+      if (meetUrl !== (item.google_meet_url || null)) {
+        const { error } = await db
+          .from('bookable_items')
+          .update({ google_meet_url: meetUrl })
+          .eq('id', itemId)
+        if (error) throw error
+      }
+      return {
+        itemId,
+        action: requestedMeet && meetUrl ? 'mis à jour avec Google Meet' : 'mis à jour',
+        googleMeet: Boolean(meetUrl),
+      }
+    }
   }
 
   if (!booked) return { itemId, action: 'aucune réservation' }
 
-  const response = await googleRequest('events', {
+  let response = await googleRequest(requestedMeet ? 'events?conferenceDataVersion=1' : 'events', {
     method: 'POST',
     body: JSON.stringify(event),
   })
-  const created = await response.json()
+  let created = await response.json()
+
+  if (!response.ok && requestedMeet) {
+    console.error(created)
+    delete event.conferenceData
+    requestedMeet = false
+    response = await googleRequest('events', {
+      method: 'POST',
+      body: JSON.stringify(event),
+    })
+    created = await response.json()
+  }
+
   if (!response.ok || !created.id) {
     console.error(created)
     throw new Error(`Création Google Agenda impossible (${response.status}).`)
   }
 
+  const meetUrl = requestedMeet
+    ? extractMeetUrl(created) || await waitForMeetUrl(created.id)
+    : null
   const { error } = await db
     .from('bookable_items')
-    .update({ google_event_id: created.id })
+    .update({ google_event_id: created.id, google_meet_url: meetUrl })
     .eq('id', itemId)
   if (error) throw error
-  return { itemId, action: 'créé' }
+  return {
+    itemId,
+    action: requestedMeet && meetUrl ? 'créé avec Google Meet' : 'créé',
+    googleMeet: Boolean(meetUrl),
+  }
 }
 
 export default {
