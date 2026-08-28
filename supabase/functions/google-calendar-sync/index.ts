@@ -3,6 +3,8 @@ import { withSupabase } from 'jsr:@supabase/server@^1'
 const calendarId = Deno.env.get('GOOGLE_CALENDAR_ID')
 const serviceAccountEmail = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL')
 const privateKeyPem = (Deno.env.get('GOOGLE_PRIVATE_KEY') || '').replace(/\\n/g, '\n')
+const meetWebAppUrl = Deno.env.get('GOOGLE_MEET_WEBAPP_URL')
+const meetWebhookSecret = Deno.env.get('GOOGLE_MEET_WEBHOOK_SECRET')
 
 if (!calendarId || !serviceAccountEmail || !privateKeyPem) {
   throw new Error('Configuration Google Agenda incomplète.')
@@ -119,32 +121,82 @@ async function deleteEvent(eventId: string) {
   }
 }
 
-const delay = (milliseconds: number) =>
-  new Promise((resolve) => setTimeout(resolve, milliseconds))
+async function callGoogleBridge(payload: Record<string, unknown>) {
+  if (!meetWebAppUrl || !meetWebhookSecret) {
+    throw new Error('Configuration du pont Google Meet incomplète.')
+  }
 
-function extractMeetUrl(event: any) {
-  const video = event?.conferenceData?.entryPoints?.find(
-    (entry: any) => entry?.entryPointType === 'video' && typeof entry?.uri === 'string',
-  )
-  return video?.uri || (typeof event?.hangoutLink === 'string' ? event.hangoutLink : null)
+  const response = await fetch(meetWebAppUrl, {
+    method: 'POST',
+    redirect: 'follow',
+    headers: { 'content-type': 'application/json' },
+    body: JSON.stringify({
+      secret: meetWebhookSecret,
+      ...payload,
+    }),
+  })
+  const raw = await response.text()
+  let data: {
+    ok?: boolean
+    meetUrl?: string | null
+    emailSent?: boolean
+    error?: string
+  } = {}
+  try {
+    data = JSON.parse(raw)
+  } catch {
+    console.error(raw)
+    throw new Error('Réponse illisible du pont Google Meet.')
+  }
+
+  if (!response.ok || !data.ok) {
+    console.error(data)
+    throw new Error(data.error || 'Appel du pont Google impossible.')
+  }
+  return data
 }
 
-async function waitForMeetUrl(eventId: string) {
-  for (let attempt = 0; attempt < 5; attempt += 1) {
-    if (attempt) await delay(attempt * 500)
-    const response = await googleRequest(`events/${encodeURIComponent(eventId)}`)
-    if (!response.ok) continue
-    const event = await response.json()
-    const url = extractMeetUrl(event)
-    if (url) return url
+async function createMeetForEvent(eventId: string) {
+  const data = await callGoogleBridge({ action: 'create_meet', eventId })
+  if (!data.meetUrl) throw new Error('Création Google Meet impossible.')
+  return data.meetUrl
+}
+
+async function sendBookingEmail(
+  db: any,
+  booking: Record<string, any>,
+  action: 'send_confirmation' | 'send_cancellation',
+) {
+  if (!booking?.item_id || !booking?.email) return false
+
+  const { data: item, error } = await db
+    .from('bookable_items')
+    .select('title,starts_at,duration_minutes,location,google_meet_url')
+    .eq('id', booking.item_id)
+    .maybeSingle()
+  if (error) throw error
+  if (!item) return false
+
+  const result = await callGoogleBridge({
+    action,
+    to: String(booking.email).trim().toLowerCase(),
+    firstName: booking.first_name || '',
+    title: item.title,
+    startsAt: item.starts_at,
+    durationMinutes: item.duration_minutes,
+    locationLabel: placeLabel(item.location),
+    meetUrl: action === 'send_confirmation' ? item.google_meet_url : null,
+  })
+  if (result.emailSent !== true) {
+    throw new Error('Google a répondu sans confirmer l’envoi de l’e-mail.')
   }
-  return null
+  return true
 }
 
 async function syncItem(db: any, itemId: string) {
   const { data: item, error: itemError } = await db
     .from('bookable_items')
-    .select('id,title,starts_at,duration_minutes,capacity,location,google_event_id,google_meet_url')
+    .select('id,title,starts_at,duration_minutes,capacity,location,active,google_event_id,google_meet_url')
     .eq('id', itemId)
     .maybeSingle()
   if (itemError) throw itemError
@@ -158,13 +210,29 @@ async function syncItem(db: any, itemId: string) {
   if (countError) throw countError
 
   const booked = count || 0
+  if (!item.active) {
+    if (item.google_event_id) {
+      await deleteEvent(item.google_event_id)
+      const { error } = await db
+        .from('bookable_items')
+        .update({ google_event_id: null, google_meet_url: null })
+        .eq('id', itemId)
+      if (error) throw error
+    }
+    return { itemId, action: 'masqué' }
+  }
   if (!item.starts_at) return { itemId, action: 'sans date' }
 
   const start = new Date(item.starts_at)
   const end = new Date(start.getTime() + Number(item.duration_minutes) * 60_000)
+  const showAvailability = item.location === 'visio'
   const needsMeet = item.location === 'visio' && booked > 0
   const event: Record<string, unknown> = {
-    summary: booked
+    summary: showAvailability
+      ? booked
+        ? `Réservé · ${item.title}`
+        : `Disponible · ${item.title}`
+      : booked
       ? `${item.title} · ${booked}/${item.capacity}`
       : `Sans inscription · ${item.title}`,
     description: booked
@@ -177,40 +245,12 @@ async function syncItem(db: any, itemId: string) {
     extendedProperties: { private: { empowerfit_item_id: item.id } },
   }
 
-  let requestedMeet = false
-  let clearingMeet = false
-  if (needsMeet && !item.google_meet_url) {
-    event.conferenceData = {
-      createRequest: {
-        requestId: `empowerfit-${item.id}-${crypto.randomUUID()}`,
-        conferenceSolutionKey: { type: 'hangoutsMeet' },
-      },
-    }
-    requestedMeet = true
-  } else if (!needsMeet && item.google_meet_url) {
-    event.conferenceData = null
-    clearingMeet = true
-  }
-
   if (item.google_event_id) {
-    let response: Response
-    try {
-      response = await patchEvent(
-        item.google_event_id,
-        event,
-        requestedMeet || clearingMeet,
-      )
-    } catch (error) {
-      if (!requestedMeet) throw error
-      delete event.conferenceData
-      requestedMeet = false
-      response = await patchEvent(item.google_event_id, event)
-    }
+    const response = await patchEvent(item.google_event_id, event)
 
     if (response.ok) {
       let meetUrl = item.google_meet_url || null
-      if (requestedMeet) meetUrl = await waitForMeetUrl(item.google_event_id)
-      if (!needsMeet) meetUrl = null
+      if (needsMeet && !meetUrl) meetUrl = await createMeetForEvent(item.google_event_id)
       if (meetUrl !== (item.google_meet_url || null)) {
         const { error } = await db
           .from('bookable_items')
@@ -220,39 +260,26 @@ async function syncItem(db: any, itemId: string) {
       }
       return {
         itemId,
-        action: requestedMeet && meetUrl ? 'mis à jour avec Google Meet' : 'mis à jour',
+        action: needsMeet && meetUrl ? 'mis à jour avec Google Meet' : 'mis à jour',
         googleMeet: Boolean(meetUrl),
       }
     }
   }
 
-  if (!booked) return { itemId, action: 'aucune réservation' }
+  if (!booked && !showAvailability) return { itemId, action: 'aucune réservation' }
 
-  let response = await googleRequest(requestedMeet ? 'events?conferenceDataVersion=1' : 'events', {
+  const response = await googleRequest('events', {
     method: 'POST',
     body: JSON.stringify(event),
   })
-  let created = await response.json()
-
-  if (!response.ok && requestedMeet) {
-    console.error(created)
-    delete event.conferenceData
-    requestedMeet = false
-    response = await googleRequest('events', {
-      method: 'POST',
-      body: JSON.stringify(event),
-    })
-    created = await response.json()
-  }
+  const created = await response.json()
 
   if (!response.ok || !created.id) {
     console.error(created)
     throw new Error(`Création Google Agenda impossible (${response.status}).`)
   }
 
-  const meetUrl = requestedMeet
-    ? extractMeetUrl(created) || await waitForMeetUrl(created.id)
-    : null
+  const meetUrl = needsMeet ? await createMeetForEvent(created.id) : null
   const { error } = await db
     .from('bookable_items')
     .update({ google_event_id: created.id, google_meet_url: meetUrl })
@@ -260,9 +287,89 @@ async function syncItem(db: any, itemId: string) {
   if (error) throw error
   return {
     itemId,
-    action: requestedMeet && meetUrl ? 'créé avec Google Meet' : 'créé',
+    action: needsMeet && meetUrl ? 'créé avec Google Meet' : 'créé',
     googleMeet: Boolean(meetUrl),
   }
+}
+
+async function syncAvailableVisio(db: any) {
+  const { data, error } = await db
+    .from('bookable_items')
+    .select('id')
+    .eq('location', 'visio')
+    .eq('active', true)
+    .gt('starts_at', new Date().toISOString())
+    .order('starts_at')
+  if (error) throw error
+
+  const results = []
+  for (const item of data || []) results.push(await syncItem(db, item.id))
+  return { received: true, synchronized: results.length, results }
+}
+
+async function processWebhook(db: any, payload: Record<string, any>) {
+  if (payload.action === 'sync_available_visio') return syncAvailableVisio(db)
+
+  const table = payload.table
+  const type = String(payload.type || '').toUpperCase()
+  const record = payload.record || null
+  const oldRecord = payload.old_record || null
+
+  if (!['bookings', 'bookable_items'].includes(table)) {
+    throw new Error('Table non prise en charge.')
+  }
+
+  if (table === 'bookable_items' && type === 'UPDATE') {
+    const relevant = ['title', 'starts_at', 'duration_minutes', 'capacity', 'location', 'active']
+    const changed = relevant.some((key) => record?.[key] !== oldRecord?.[key])
+    if (!changed) return { received: true, ignored: true }
+  }
+
+  if (table === 'bookable_items' && type === 'DELETE') {
+    if (oldRecord?.google_event_id) await deleteEvent(oldRecord.google_event_id)
+    return { received: true, action: 'supprimé de Google Agenda' }
+  }
+
+  const ids = new Set<string>()
+  if (table === 'bookings') {
+    if (record?.item_id) ids.add(record.item_id)
+    if (oldRecord?.item_id) ids.add(oldRecord.item_id)
+  } else if (record?.id) {
+    ids.add(record.id)
+  }
+
+  const results = []
+  for (const id of ids) results.push(await syncItem(db, id))
+
+  let email: 'confirmation envoyée' | 'annulation envoyée' | 'non envoyé' | null = null
+  if (table === 'bookings' && type !== 'DELETE' && record) {
+    const statusChanged = type === 'INSERT' || !oldRecord ||
+      record.status !== oldRecord.status
+    const emailAction = record.status === 'confirmed'
+      ? 'send_confirmation'
+      : record.status === 'cancelled'
+      ? 'send_cancellation'
+      : null
+
+    if (statusChanged && emailAction) {
+      try {
+        const sent = await sendBookingEmail(db, record, emailAction)
+        email = sent
+          ? emailAction === 'send_confirmation' ? 'confirmation envoyée' : 'annulation envoyée'
+          : 'non envoyé'
+        console.log('E-mail EMPOWERFIT', {
+          bookingId: record.id || null,
+          action: emailAction,
+          result: email,
+        })
+      } catch (error) {
+        console.error('E-mail EMPOWERFIT non envoyé', error)
+        email = 'non envoyé'
+      }
+    }
+  }
+
+  return { received: true, results, email }
 }
 
 export default {
@@ -271,42 +378,16 @@ export default {
 
     try {
       const payload = await request.json()
-      const table = payload.table
-      const type = payload.type
-      const record = payload.record || null
-      const oldRecord = payload.old_record || null
-
-      if (!['bookings', 'bookable_items'].includes(table)) {
-        return json({ error: 'Table non prise en charge.' }, 400)
-      }
-
-      if (table === 'bookable_items' && type === 'UPDATE') {
-        const relevant = ['title', 'starts_at', 'duration_minutes', 'capacity', 'location']
-        const changed = relevant.some((key) => record?.[key] !== oldRecord?.[key])
-        if (!changed) return json({ received: true, ignored: true })
-      }
-
-      if (table === 'bookable_items' && type === 'DELETE') {
-        if (oldRecord?.google_event_id) {
-          await deleteEvent(oldRecord.google_event_id)
-        }
-        return json({ received: true, action: 'supprimé de Google Agenda' })
-      }
-
-      const ids = new Set<string>()
-      if (table === 'bookings') {
-        if (record?.item_id) ids.add(record.item_id)
-        if (oldRecord?.item_id) ids.add(oldRecord.item_id)
-      } else if (record?.id) {
-        ids.add(record.id)
-      }
-
-      const results = []
-      for (const id of ids) results.push(await syncItem(ctx.supabaseAdmin, id))
-      return json({ received: true, results })
+      console.log('Traitement EMPOWERFIT démarré', {
+        table: payload?.table || null,
+        type: payload?.type || null,
+      })
+      const result = await processWebhook(ctx.supabaseAdmin, payload)
+      console.log('Traitement EMPOWERFIT terminé', result)
+      return json(result)
     } catch (error) {
-      console.error(error)
-      return json({ error: error instanceof Error ? error.message : 'Synchronisation impossible.' }, 500)
+      console.error('Traitement EMPOWERFIT impossible', error)
+      return json({ error: error instanceof Error ? error.message : 'Requête invalide.' }, 500)
     }
   }),
 }
