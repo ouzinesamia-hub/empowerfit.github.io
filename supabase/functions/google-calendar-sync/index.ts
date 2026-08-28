@@ -341,6 +341,14 @@ async function processWebhook(db: any, payload: Record<string, any>) {
   const results = []
   for (const id of ids) results.push(await syncItem(db, id))
 
+  if (
+    table === 'bookable_items' && type === 'UPDATE' &&
+    (record?.location === 'visio' || oldRecord?.location === 'visio')
+  ) {
+    const availabilitySync = await syncAvailableVisio(db)
+    return { received: true, results, availabilitySync }
+  }
+
   let email: 'confirmation envoyée' | 'annulation envoyée' | 'non envoyé' | null = null
   if (table === 'bookings' && type !== 'DELETE' && record) {
     const statusChanged = type === 'INSERT' || !oldRecord ||
