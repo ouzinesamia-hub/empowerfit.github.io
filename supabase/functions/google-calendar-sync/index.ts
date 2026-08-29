@@ -5,6 +5,8 @@ const serviceAccountEmail = Deno.env.get('GOOGLE_SERVICE_ACCOUNT_EMAIL')
 const privateKeyPem = (Deno.env.get('GOOGLE_PRIVATE_KEY') || '').replace(/\\n/g, '\n')
 const meetWebAppUrl = Deno.env.get('GOOGLE_MEET_WEBAPP_URL')
 const meetWebhookSecret = Deno.env.get('GOOGLE_MEET_WEBHOOK_SECRET')
+const siteBaseUrl = (Deno.env.get('EMPOWERFIT_SITE_URL') ||
+  'https://ouzinesamia-hub.github.io/empowerfit.github.io').replace(/\/$/, '')
 
 if (!calendarId || !serviceAccountEmail || !privateKeyPem) {
   throw new Error('Configuration Google Agenda incomplète.')
@@ -171,11 +173,18 @@ async function sendBookingEmail(
 
   const { data: item, error } = await db
     .from('bookable_items')
-    .select('title,starts_at,duration_minutes,location,google_meet_url')
+    .select('title,starts_at,duration_minutes,location,category,google_meet_url')
     .eq('id', booking.item_id)
     .maybeSingle()
   if (error) throw error
   if (!item) return false
+
+  const questionnaireUrl = action === 'send_confirmation' &&
+      item.category === 'bilans' &&
+      item.location === 'visio' &&
+      booking.questionnaire_access_token
+    ? `${siteBaseUrl}/questionnaire-bilan.html?token=${encodeURIComponent(booking.questionnaire_access_token)}`
+    : null
 
   const result = await callGoogleBridge({
     action,
@@ -186,6 +195,7 @@ async function sendBookingEmail(
     durationMinutes: item.duration_minutes,
     locationLabel: placeLabel(item.location),
     meetUrl: action === 'send_confirmation' ? item.google_meet_url : null,
+    questionnaireUrl,
   })
   if (result.emailSent !== true) {
     throw new Error('Google a répondu sans confirmer l’envoi de l’e-mail.')
