@@ -1,0 +1,239 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+  <meta name="theme-color" content="#5F123F">
+  <meta name="robots" content="noindex,nofollow,noarchive">
+  <meta name="referrer" content="no-referrer">
+  <title>Préparer mon bilan · EMPOWERFIT</title>
+  <style>
+    :root{--plum:#5f123f;--plum-dark:#351027;--plum-soft:#7b315f;--gold:#c7a35a;--cream:#f8f3ef;--blush:#eedfe7;--ink:#29242a;--muted:#756b72;--white:#fff;--ok:#237a57;--error:#a22;--shadow:0 22px 60px rgba(53,16,39,.14)}
+    *{box-sizing:border-box}
+    html{background:var(--cream)}
+    body{margin:0;min-height:100vh;color:var(--ink);background:radial-gradient(circle at 100% 0,rgba(199,163,90,.18),transparent 32rem),var(--cream);font-family:Inter,ui-sans-serif,system-ui,-apple-system,BlinkMacSystemFont,"Segoe UI",sans-serif}
+    button,input{font:inherit}
+    button{touch-action:manipulation}
+    .topbar{height:8px;background:linear-gradient(90deg,var(--plum-dark),var(--plum),var(--gold))}
+    .shell{width:min(100%,760px);margin:auto;padding:22px 18px calc(38px + env(safe-area-inset-bottom))}
+    .brand{display:flex;align-items:center;justify-content:space-between;gap:16px;margin-bottom:24px}
+    .brand strong{color:var(--plum);font-size:1.05rem;letter-spacing:.14em}
+    .brand span{color:var(--muted);font-size:.78rem;text-align:right}
+    .card{background:rgba(255,255,255,.94);border:1px solid rgba(95,18,63,.11);border-radius:25px;box-shadow:var(--shadow);overflow:hidden}
+    .card-body{padding:clamp(24px,5vw,44px)}
+    .eyebrow{color:var(--plum-soft);font-size:.76rem;font-weight:800;letter-spacing:.13em;text-transform:uppercase}
+    h1{margin:.55rem 0 1rem;color:var(--plum-dark);font-size:clamp(2rem,7vw,3.25rem);line-height:1.02;letter-spacing:-.04em}
+    h2{margin:.5rem 0 1rem;color:var(--plum-dark);font-size:clamp(1.55rem,5vw,2.25rem);line-height:1.12;letter-spacing:-.025em}
+    p{line-height:1.62}
+    .lead{font-size:1.04rem;color:#4d4249}
+    .appointment{margin:22px 0;padding:16px 18px;border-left:4px solid var(--gold);border-radius:0 13px 13px 0;background:var(--cream)}
+    .appointment b{display:block;color:var(--plum);margin-bottom:4px}
+    .micro{font-size:.84rem;color:var(--muted)}
+    .progress-wrap{padding:18px 24px 0}
+    .progress-meta{display:flex;justify-content:space-between;gap:12px;color:var(--muted);font-size:.78rem;font-weight:700}
+    .track{height:7px;margin-top:10px;border-radius:99px;background:#eadfe5;overflow:hidden}
+    .bar{height:100%;width:0;background:linear-gradient(90deg,var(--plum),var(--gold));transition:width .28s ease}
+    .question-number{margin-top:2px;color:var(--plum-soft);font-size:.82rem;font-weight:800}
+    .question-note{margin:-.2rem 0 1.25rem;color:var(--muted);font-size:.88rem;line-height:1.45}
+    .options{display:grid;gap:10px;margin-top:22px}
+    .option{width:100%;min-height:52px;padding:13px 15px;border:1.5px solid #ddcfd7;border-radius:14px;background:#fff;color:var(--ink);text-align:left;cursor:pointer;transition:border-color .15s,background .15s,transform .15s;display:flex;align-items:center;gap:12px}
+    .option:hover{border-color:var(--plum-soft)}
+    .option:active{transform:scale(.992)}
+    .option::before{content:"";width:20px;height:20px;flex:0 0 20px;border:2px solid #c8b5c0;border-radius:50%;background:#fff;box-shadow:inset 0 0 0 4px #fff}
+    .multiple .option::before{border-radius:6px}
+    .option.selected{border-color:var(--plum);background:#f8edf3;color:var(--plum-dark);font-weight:750}
+    .option.selected::before{border-color:var(--plum);background:var(--plum)}
+    .scale{display:grid;grid-template-columns:repeat(5,1fr);gap:9px;margin-top:24px}
+    .scale .option{min-height:52px;justify-content:center;padding:8px;text-align:center}
+    .scale .option::before{display:none}
+    .scale-ends{display:flex;justify-content:space-between;margin-top:8px;color:var(--muted);font-size:.76rem}
+    .other-wrap{margin-top:12px}
+    .other-wrap label{display:block;margin-bottom:7px;color:var(--plum-dark);font-weight:750;font-size:.88rem}
+    .other-wrap input{width:100%;min-height:50px;padding:12px 14px;border:1.5px solid #ccb9c4;border-radius:12px;background:#fff;color:var(--ink)}
+    .other-wrap input:focus{outline:3px solid rgba(199,163,90,.25);border-color:var(--plum)}
+    .subquestion{margin-top:24px;padding-top:22px;border-top:1px solid #e7dce2}
+    .subquestion h3{margin:0 0 11px;color:var(--plum-dark);font-size:1rem}
+    .actions{display:flex;align-items:center;justify-content:space-between;gap:12px;margin-top:30px}
+    .btn{min-height:52px;padding:13px 22px;border:0;border-radius:14px;background:var(--plum);color:#fff;font-weight:850;letter-spacing:.02em;cursor:pointer;box-shadow:0 10px 24px rgba(95,18,63,.19)}
+    .btn:hover{background:var(--plum-dark)}
+    .btn.secondary{background:transparent;color:var(--plum);box-shadow:none;border:1px solid #d9c9d2}
+    .btn.wide{width:100%}
+    .btn:disabled{opacity:.55;cursor:wait}
+    .error{min-height:21px;margin:14px 0 0;color:var(--error);font-size:.88rem;font-weight:700}
+    .consents{display:grid;gap:13px;margin:22px 0}
+    .consent{display:flex;align-items:flex-start;gap:12px;padding:15px;border:1px solid #e0d2d9;border-radius:14px;background:#fff;line-height:1.42;cursor:pointer}
+    .consent input{width:21px;height:21px;flex:0 0 auto;margin:1px 0 0;accent-color:var(--plum)}
+    .consent.optional{background:var(--cream)}
+    .success-mark{width:68px;height:68px;display:grid;place-items:center;border-radius:50%;background:var(--plum);color:#fff;font-size:2rem;margin-bottom:24px;box-shadow:0 10px 30px rgba(95,18,63,.23)}
+    .revolution{margin-top:26px;padding:22px;border-radius:17px;background:linear-gradient(135deg,var(--plum-dark),var(--plum));color:#fff}
+    .revolution strong{color:#f2dcae}
+    .loading{text-align:center;padding:62px 30px;color:var(--muted)}
+    .spinner{width:34px;height:34px;margin:0 auto 18px;border:3px solid #eadce4;border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite}
+    @keyframes spin{to{transform:rotate(360deg)}}
+    @media (max-width:520px){.shell{padding-left:12px;padding-right:12px}.brand{padding:0 7px}.card{border-radius:21px}.card-body{padding:24px 20px}.progress-wrap{padding:16px 20px 0}.actions{align-items:stretch}.actions .btn{padding-left:15px;padding-right:15px}.scale{grid-template-columns:repeat(5,1fr);gap:6px}.scale .option{min-height:46px}.brand span{max-width:145px}}
+  </style>
+</head>
+<body>
+  <div class="topbar"></div>
+  <main class="shell">
+    <div class="brand"><strong>EMPOWERFIT</strong><span>Bilan Force &amp; Longévité</span></div>
+    <section class="card" id="app" aria-live="polite">
+      <div class="loading"><div class="spinner"></div>Préparation de votre espace personnel…</div>
+    </section>
+  </main>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+  <script>
+    const db=window.supabase.createClient("https://fkyieurufkxdvzovcqzj.supabase.co","sb_publishable_E_9CcWp8K5VJHxe2rGjJew_p9pmd-u9");
+    const app=document.getElementById("app");
+    const token=new URLSearchParams(location.search).get("token")||"";
+    const state={context:null,answers:{},index:0};
+    const A="Autre, précisez";
+    const steps=[
+      {n:1,stage:"Ce que vous voulez changer",q:"Quel est votre objectif prioritaire ?",options:["Retrouver de la force","Reprendre une activité physique","Améliorer ma composition corporelle","Retrouver de l’énergie","Améliorer ma mobilité","Me sentir plus solide au quotidien","Reprendre confiance en mon corps","Mieux vivre la périménopause ou la ménopause","Reprendre après une grossesse",A]},
+      {n:2,stage:"Ce que vous voulez changer",q:"Dans trois mois, quel changement aimeriez-vous constater en priorité ?",options:["Me sentir plus forte","Avoir davantage d’énergie","Être devenue régulière","Me sentir plus tonique","Être plus à l’aise dans mon corps","Réaliser certains mouvements plus facilement","Avoir moins de limitations au quotidien","Avoir retrouvé confiance en mes capacités",A]},
+      {n:3,stage:"Ce que vous voulez changer",q:"Pourquoi souhaitez-vous agir maintenant ?",options:["Je repousse ce changement depuis trop longtemps","Mon corps ou ma silhouette a changé","Je ressens une baisse d’énergie","Je traverse une nouvelle étape de vie","Je me sens moins forte qu’avant","Je veux préserver ma santé et ma mobilité","J’ai besoin d’un cadre clair","Je veux apprendre à m’entraîner correctement",A]},
+      {n:4,stage:"Ce que vous voulez changer",q:"À quel point êtes-vous déterminée à faire évoluer cette situation ?",type:"scale",low:"1 · J’hésite encore",high:"10 · Je suis décidée"},
+      {n:5,stage:"Ce que vous voulez changer",q:"Quel rythme pouvez-vous réellement maintenir pendant huit semaines ?",note:"Choisissez un rythme réaliste, même pendant une semaine chargée. La progression se construit dans la régularité, pas dans la perfection.",options:["1 séance par semaine","2 séances par semaine","3 séances par semaine","4 séances ou plus","Je ne sais pas encore"]},
+      {n:6,stage:"Votre expérience sportive",q:"Vous entraînez-vous actuellement ?",options:["Pas actuellement","Occasionnellement","1 fois par semaine","2 fois par semaine","3 fois ou plus par semaine"]},
+      {n:7,stage:"Votre expérience sportive",q:"Quelles activités pratiquez-vous ou avez-vous pratiquées récemment ?",type:"multi",options:["Marche","Musculation","Pilates","Yoga","Course à pied","Vélo","Natation","Cours collectifs","Entraînement à domicile","Aucune actuellement",A],exclusive:["Aucune actuellement"]},
+      {n:8,stage:"Votre expérience sportive",q:"Quelle est votre expérience du renforcement musculaire ?",options:["Je n’en ai jamais pratiqué","J’ai réalisé quelques séances","Je pratique depuis quelques mois","Je pratique régulièrement","J’en ai pratiqué plusieurs années","Je reprends après une interruption"]},
+      {n:9,stage:"Votre expérience sportive",q:"Qu’est-ce qui vous aide le plus à rester régulière ?",type:"multi",options:["Des rendez-vous fixes","Un programme précis","La présence d’une coach","Un groupe motivant","Le suivi de mes progrès","Des séances courtes","La possibilité de m’entraîner chez moi","Je n’ai pas encore trouvé ce qui fonctionne pour moi",A],exclusive:["Je n’ai pas encore trouvé ce qui fonctionne pour moi"]},
+      {n:10,stage:"Votre expérience sportive",q:"Quel est votre principal frein actuellement ?",options:["Le manque de temps","La fatigue","Le manque de régularité","La peur de me blesser","Une douleur ou une limitation","Le manque de connaissances","Le manque de motivation","Le manque de confiance","Des programmes trop difficiles ou inadaptés","Mes contraintes familiales ou professionnelles",A]},
+      {n:11,stage:"Votre quotidien",q:"Votre journée habituelle est plutôt :",options:["Principalement assise","Partagée entre position assise et déplacements","Assez active","Très active ou physique","Variable selon les jours",A]},
+      {n:12,stage:"Votre quotidien",q:"Comment évaluez-vous la qualité de votre sommeil ?",type:"scale",low:"1 · Très mauvaise",high:"10 · Excellente"},
+      {n:13,stage:"Votre quotidien",q:"Comment évaluez-vous votre niveau d’énergie ?",type:"scale",low:"1 · Très faible",high:"10 · Très élevé"},
+      {n:14,stage:"Votre quotidien",q:"Comment évaluez-vous votre niveau de stress ?",type:"scale",low:"1 · Très faible",high:"10 · Très élevé"},
+      {n:15,stage:"Votre quotidien",q:"Vous reconnaissez-vous dans l’une de ces situations ?",note:"Cette information sert uniquement à mieux comprendre votre énergie, votre récupération et vos besoins actuels.",options:["Cycles menstruels réguliers","Cycles irréguliers","Périménopause","Ménopause","Grossesse","Post-partum","Aucune de ces situations","Je préfère ne pas répondre",A]},
+      {n:16,stage:"Votre corps aujourd’hui",q:"Ressentez-vous actuellement une douleur ou une gêne physique ?",type:"pain"},
+      {n:17,stage:"Votre corps aujourd’hui",q:"Avez-vous subi une blessure, une opération ou une hospitalisation au cours des douze derniers mois ?",options:["Non","Oui, mais je n’ai plus de restriction","Oui, avec certaines précautions","Oui, et je suis toujours suivie",A]},
+      {n:18,stage:"Votre corps aujourd’hui",q:"Avez-vous reçu une consigne médicale concernant l’activité physique ?",options:["Non","Oui, je dois éviter certains mouvements","Oui, je dois limiter l’intensité","Oui, je dois reprendre progressivement","Je ne sais pas",A]},
+      {n:19,stage:"Votre corps aujourd’hui",q:"Avez-vous récemment ressenti l’un de ces symptômes ?",type:"multi",options:["Une douleur ou une oppression dans la poitrine","Un essoufflement inhabituel","Des vertiges importants","Une perte de connaissance","Une perte d’équilibre inexpliquée","Aucun de ces symptômes",A],exclusive:["Aucun de ces symptômes"]},
+      {n:20,stage:"Votre corps aujourd’hui",q:"Prenez-vous un traitement susceptible d’influencer votre effort, votre équilibre ou votre récupération ?",options:["Non","Oui","Je ne sais pas","Je préfère vous en parler pendant le bilan"]},
+      {n:21,stage:"Votre corps aujourd’hui",q:"Concernant la grossesse ou le post-partum :",options:["Je suis enceinte","J’ai accouché il y a moins de 3 mois","Il y a 3 à 6 mois","Il y a 6 à 12 mois","Il y a plus de 12 mois","Je préfère vous en parler pendant le bilan"],when:()=>["Grossesse","Post-partum"].includes(singleValue(state.answers.q15))},
+      {n:22,stage:"Votre corps aujourd’hui",q:"Certains mouvements vous inquiètent-ils ou vous mettent-ils en difficulté ?",type:"multi",options:["M’accroupir","Me pencher vers l’avant","Me relever du sol","Tenir en équilibre sur une jambe","Lever les bras au-dessus de la tête","Pousser ou porter une charge","Marcher rapidement ou monter les escaliers","Aucun mouvement particulier",A],exclusive:["Aucun mouvement particulier"]},
+      {n:23,stage:"Préparons votre bilan",q:"Le jour du bilan, pourrez-vous prévoir :",note:"Sélectionnez tout ce que vous pourrez préparer.",type:"multi",options:["Une chaise stable","Un peu d’espace autour de moi","Une tenue confortable","Une caméra permettant de voir l’ensemble de mon corps","Un mur ou un support stable à proximité"]},
+      {n:24,stage:"Préparons votre bilan",q:"Acceptez-vous de réaliser quelques mouvements simples et adaptés à votre situation ?",options:["Oui","Oui, mais je souhaite rester prudente","Je préfère en parler avant de commencer","Je souhaite réaliser uniquement la partie entretien"]},
+      {n:25,stage:"Préparons votre bilan",q:"Y a-t-il un autre sujet que vous aimeriez aborder pendant le bilan ?",type:"multi",options:["Mon entraînement","Ma composition corporelle","Mon énergie","Mon sommeil","Mon stress","Ma confiance en mon corps","Mon organisation","La périménopause ou la ménopause","La reprise après une grossesse","Non, les sujets principaux sont déjà renseignés",A],exclusive:["Non, les sujets principaux sont déjà renseignés"]}
+    ];
+    function singleValue(value){return typeof value==="string"?value:(value&&value.choice)||""}
+    function visibleSteps(){return steps.filter(s=>!s.when||s.when())}
+    function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
+    function formattedDate(value){return value?new Intl.DateTimeFormat("fr-FR",{dateStyle:"full",timeStyle:"short",timeZone:"Europe/Paris"}).format(new Date(value)):""}
+    function welcome(){
+      const c=state.context;
+      app.innerHTML='<div class="card-body"><div class="eyebrow">Votre espace personnel</div><h1>Votre bilan commence ici.</h1><p class="lead">Bonjour '+esc(c.first_name)+', votre force commence par une vision claire.</p><p>Ces quelques questions me permettront de comprendre votre réalité, vos objectifs et la manière la plus juste de vous faire progresser.</p><p>Répondez simplement, sans chercher la réponse parfaite. Il n’existe pas de « bon niveau » pour commencer : uniquement un point de départ à identifier.</p>'+(c.starts_at?'<div class="appointment"><b>Votre rendez-vous</b>'+esc(formattedDate(c.starts_at))+' · en visio</div>':'')+'<p class="micro">Durée : environ 5 à 7 minutes. Vos réponses sont confidentielles et servent uniquement à préparer votre accompagnement.</p><button class="btn wide" id="start">COMMENCER MON QUESTIONNAIRE</button></div>';
+      document.getElementById("start").onclick=()=>{state.index=0;renderQuestion()};
+    }
+    function optionButtons(step,options,selected,multiple=false){
+      const wrap=document.createElement("div");wrap.className="options"+(multiple?" multiple":"");
+      options.forEach(label=>{const b=document.createElement("button");b.type="button";b.className="option"+(selected(label)?" selected":"");b.textContent=label;b.setAttribute("aria-pressed",selected(label)?"true":"false");b.onclick=()=>choose(step,label);wrap.appendChild(b)});
+      return wrap;
+    }
+    function choose(step,label){
+      const id="q"+step.n;
+      if(step.type==="multi"){
+        const current=state.answers[id]&&Array.isArray(state.answers[id].choices)?state.answers[id]:{choices:[],other:""};
+        let choices=[...current.choices];
+        const on=choices.includes(label);
+        if(on) choices=choices.filter(x=>x!==label);
+        else if((step.exclusive||[]).includes(label)) choices=[label];
+        else{choices=choices.filter(x=>!(step.exclusive||[]).includes(x));choices.push(label)}
+        state.answers[id]={choices,other:choices.includes(A)?current.other||"":""};
+      }else{
+        state.answers[id]=label===A?{choice:A,other:""}:label;
+        if(step.n===15&&!["Grossesse","Post-partum"].includes(label))delete state.answers.q21;
+      }
+      renderQuestion();
+    }
+    function otherField(step,value){
+      const wrap=document.createElement("div");wrap.className="other-wrap";
+      const label=document.createElement("label");label.textContent="Précisez en quelques mots";
+      const input=document.createElement("input");input.type="text";input.maxLength=300;input.value=value||"";input.placeholder="Votre précision";input.autocomplete="off";
+      input.oninput=()=>{const id="q"+step.n;state.answers[id]={...state.answers[id],other:input.value}};
+      wrap.append(label,input);return wrap;
+    }
+    function scaleButtons(step,current,onPick){
+      const block=document.createElement("div");const grid=document.createElement("div");grid.className="scale";
+      for(let i=1;i<=10;i++){const b=document.createElement("button");b.type="button";b.className="option"+(current===i?" selected":"");b.textContent=String(i);b.onclick=()=>onPick(i);grid.appendChild(b)}
+      const ends=document.createElement("div");ends.className="scale-ends";ends.innerHTML="<span>"+esc(step.low||"1")+"</span><span>"+esc(step.high||"10")+"</span>";block.append(grid,ends);return block;
+    }
+    function painBlock(step){
+      const value=state.answers.q16||{pain:"",location:"",other:"",intensity:null};
+      const frag=document.createDocumentFragment();
+      frag.append(optionButtons(step,["Non","Oui"],x=>value.pain===x));
+      frag.querySelectorAll(".option").forEach(b=>b.onclick=()=>{state.answers.q16={pain:b.textContent,location:"",other:"",intensity:null};renderQuestion()});
+      if(value.pain==="Oui"){
+        const loc=document.createElement("div");loc.className="subquestion";loc.innerHTML="<h3>Où se situe-t-elle ?</h3>";
+        const locations=["Dos","Nuque ou cervicales","Épaule","Coude ou poignet","Hanche","Genou","Cheville ou pied","Plusieurs zones",A];
+        const buttons=optionButtons(step,locations,x=>value.location===x);
+        buttons.querySelectorAll(".option").forEach(b=>b.onclick=()=>{state.answers.q16={...value,location:b.textContent,other:b.textContent===A?"":value.other};renderQuestion()});
+        loc.appendChild(buttons);
+        if(value.location===A)loc.appendChild(otherField({n:16},value.other));
+        const intensity=document.createElement("div");intensity.className="subquestion";intensity.innerHTML="<h3>Quelle est son intensité aujourd’hui ?</h3>";
+        intensity.appendChild(scaleButtons({low:"1 · Très légère",high:"10 · Très forte"},value.intensity,n=>{state.answers.q16={...value,intensity:n};renderQuestion()}));
+        frag.append(loc,intensity);
+      }
+      return frag;
+    }
+    function currentValid(step){
+      const value=state.answers["q"+step.n];
+      if(step.type==="pain")return value&&value.pain&&((value.pain==="Non")||(value.location&&value.intensity&&(!value.location.includes("Autre")||String(value.other||"").trim())));
+      if(step.type==="multi")return value&&value.choices&&value.choices.length>0&&(!value.choices.includes(A)||String(value.other||"").trim().length>0);
+      if(step.type==="scale")return Number.isInteger(value)&&value>=1&&value<=10;
+      return Boolean(singleValue(value))&&(singleValue(value)!==A||String(value.other||"").trim().length>0);
+    }
+    function renderQuestion(){
+      const list=visibleSteps();if(state.index>=list.length)state.index=list.length-1;
+      const step=list[state.index],id="q"+step.n,value=state.answers[id];
+      app.innerHTML='<div class="progress-wrap"><div class="progress-meta"><span>ÉTAPE '+(step.n<=5?"1":step.n<=10?"2":step.n<=15?"3":step.n<=22?"4":"5")+' · '+esc(step.stage)+'</span><span>'+step.n+' / 25</span></div><div class="track"><div class="bar" style="width:'+(step.n/25*100)+'%"></div></div></div><div class="card-body"><div class="question-number">QUESTION '+step.n+'</div><h2>'+esc(step.q)+'</h2>'+(step.note?'<p class="question-note">'+esc(step.note)+'</p>':'')+'<div id="answer"></div><div class="error" id="answerError"></div><div class="actions"><button class="btn secondary" id="back">RETOUR</button><button class="btn" id="next">'+(step.n===25?"VALIDER MES RÉPONSES":"CONTINUER")+'</button></div></div>';
+      const answer=document.getElementById("answer");
+      if(step.type==="pain")answer.appendChild(painBlock(step));
+      else if(step.type==="scale")answer.appendChild(scaleButtons(step,value,n=>{state.answers[id]=n;renderQuestion()}));
+      else if(step.type==="multi"){
+        const current=value&&value.choices?value:{choices:[],other:""};
+        answer.appendChild(optionButtons(step,step.options,x=>current.choices.includes(x),true));
+        if(current.choices.includes(A))answer.appendChild(otherField(step,current.other));
+      }else{
+        answer.appendChild(optionButtons(step,step.options,x=>singleValue(value)===x));
+        if(singleValue(value)===A)answer.appendChild(otherField(step,value.other));
+      }
+      document.getElementById("back").onclick=()=>{if(state.index===0)welcome();else{state.index--;renderQuestion()}};
+      document.getElementById("next").onclick=()=>{if(!currentValid(step)){document.getElementById("answerError").textContent="Sélectionnez votre réponse pour continuer.";return}if(state.index===visibleSteps().length-1)renderConsents();else{state.index++;renderQuestion()}};
+      scrollTo({top:0,behavior:"smooth"});
+    }
+    function renderConsents(){
+      app.innerHTML='<div class="progress-wrap"><div class="progress-meta"><span>DERNIÈRE ÉTAPE · Validation</span><span>25 / 25</span></div><div class="track"><div class="bar" style="width:100%"></div></div></div><div class="card-body"><div class="eyebrow">Avant d’envoyer</div><h2>Confirmez vos réponses.</h2><p class="question-note">Ces informations permettent de préparer un bilan pertinent et sécurisant. Elles ne remplacent pas un avis médical.</p><div class="consents"><label class="consent"><input id="accuracy" type="checkbox"><span>Je confirme que mes réponses sont exactes à ma connaissance et je signalerai tout changement avant le rendez-vous.</span></label><label class="consent"><input id="use" type="checkbox"><span>J’accepte que les informations communiquées soient utilisées par EMPOWERFIT uniquement pour préparer, adapter et assurer le suivi de mon bilan.</span></label><label class="consent"><input id="scope" type="checkbox"><span>J’ai compris que ce bilan est un accompagnement sportif et qu’il ne remplace pas une consultation ou un diagnostic médical.</span></label><label class="consent optional"><input id="marketing" type="checkbox"><span>Facultatif — Je souhaite recevoir les conseils, actualités et offres EMPOWERFIT.</span></label></div><div class="error" id="submitError"></div><div class="actions"><button class="btn secondary" id="back">RETOUR</button><button class="btn" id="submit">VALIDER ET PRÉPARER MON BILAN</button></div></div>';
+      document.getElementById("back").onclick=()=>{state.index=visibleSteps().length-1;renderQuestion()};
+      document.getElementById("submit").onclick=submit;
+      scrollTo({top:0,behavior:"smooth"});
+    }
+    async function submit(){
+      const accuracy=document.getElementById("accuracy").checked,use=document.getElementById("use").checked,scope=document.getElementById("scope").checked,marketing=document.getElementById("marketing").checked;
+      const errorBox=document.getElementById("submitError"),button=document.getElementById("submit");
+      if(!accuracy||!use||!scope){errorBox.textContent="Les trois premières confirmations sont nécessaires pour transmettre le questionnaire.";return}
+      button.disabled=true;button.textContent="ENREGISTREMENT…";errorBox.textContent="";
+      const {error}=await db.rpc("submit_bilan_questionnaire",{p_access_token:token,p_answers:state.answers,p_consent_accuracy:accuracy,p_consent_use:use,p_consent_scope:scope,p_marketing_opt_in:marketing});
+      if(error){errorBox.textContent=error.message||"L’enregistrement a échoué. Réessayez.";button.disabled=false;button.textContent="VALIDER ET PRÉPARER MON BILAN";return}
+      success();
+    }
+    function success(){
+      state.answers={};
+      app.innerHTML='<div class="card-body"><div class="success-mark">✓</div><div class="eyebrow">Votre première étape est accomplie</div><h1>Merci, vos réponses ont bien été enregistrées.</h1><p class="lead">Je peux maintenant préparer votre bilan avec précision.</p><div class="revolution"><strong>Tenez-vous prête à entrer dans la Fitérus Révolution.</strong></div><p class="micro">Vous n’avez rien à imprimer. Nous reprendrons les éléments utiles ensemble pendant votre rendez-vous.</p></div>';
+      scrollTo({top:0,behavior:"smooth"});
+    }
+    function failure(message){
+      app.innerHTML='<div class="card-body"><div class="eyebrow">Lien personnel</div><h2>Ce questionnaire n’est pas accessible.</h2><p>'+esc(message)+'</p><p class="micro">Vérifiez que vous avez ouvert le lien reçu après votre réservation. Si le problème persiste, contactez EMPOWERFIT.</p></div>';
+    }
+    async function init(){
+      if(!/^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(token)){failure("Le lien est incomplet ou invalide.");return}
+      const {data,error}=await db.rpc("get_bilan_questionnaire_context",{p_access_token:token});
+      const context=Array.isArray(data)?data[0]:data;
+      if(error||!context){failure("Ce lien est invalide, a expiré ou la réservation n’est plus active.");return}
+      state.context=context;
+      if(context.already_submitted){success();return}
+      welcome();
+    }
+    init();
+  </script>
+</body>
+</html>
