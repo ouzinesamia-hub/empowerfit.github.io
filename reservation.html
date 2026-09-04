@@ -12,6 +12,7 @@ header{background:var(--p);color:#fff;padding:18px 5%;position:sticky;top:0;z-in
 main{max-width:1050px;margin:auto;padding:34px 18px 70px}.hero{text-align:center;max-width:720px;margin:auto auto 28px}.eyebrow{color:var(--p);font-size:.75rem;font-weight:800;letter-spacing:.18em}.hero h1{font-family:Georgia,serif;color:var(--p);font-size:clamp(2rem,6vw,3.7rem);margin:.35em 0 .25em}.hero p{line-height:1.6;color:var(--mut)}
 .hidden{display:none!important}.location-tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:16px 0 22px}.location-tab{border:1px solid #5f123f33;background:#fff;color:var(--p);padding:9px 16px;border-radius:99px;font-weight:800;cursor:pointer}.location-tab.active{background:var(--i);color:#fff}.slot-title{font-family:Georgia,serif;color:var(--p);margin:30px 0 14px}.context-note{max-width:760px;margin:12px auto 24px;padding:15px;border:1px dashed #5f123f55;border-radius:14px;text-align:center;color:var(--mut);background:#fff8}.compact-offers{max-width:760px;margin-inline:auto}
 .offers{margin:34px 0 44px}.section-title{text-align:center;color:var(--p);font-family:Georgia,serif;font-size:clamp(1.8rem,4vw,2.7rem);margin:0 0 8px}.section-intro{text-align:center;color:var(--mut);max-width:720px;margin:0 auto 22px;line-height:1.55}.offer-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(235px,1fr));gap:15px}.offer{background:#fff;border-radius:18px;padding:20px;box-shadow:0 8px 28px #3a172112;border:1px solid #5f123f12;display:flex;flex-direction:column}.offer h3{color:var(--p);font-family:Georgia,serif;font-size:1.35rem;margin:7px 0}.offer .price{font-size:1.65rem;font-weight:900;color:var(--i);margin:3px 0 10px}.offer .price small{font-size:.8rem;color:var(--mut);font-weight:700}.offer ul{margin:0 0 8px;padding-left:19px;color:var(--mut);line-height:1.55;font-size:.9rem;flex:1}.offer li{margin-bottom:8px}.offer .direction{margin-top:10px;font-weight:850;color:var(--p);font-size:.9rem}.pay{display:block;text-align:center;text-decoration:none;border-radius:12px;padding:12px;background:var(--p);color:#fff;font-weight:850}.pay:hover{filter:brightness(1.08)}.terms{margin:18px auto 0;padding:14px 16px;max-width:900px;border-radius:14px;background:#fff8;border:1px solid #5f123f1c;color:var(--mut);font-size:.78rem;line-height:1.55}
+.pay{width:100%;border:0;cursor:pointer}.return-status{max-width:760px;margin:0 auto 24px;border-style:solid;background:#edf8f2;color:var(--ok)}.return-status strong{display:block;color:var(--ok);font-size:1.05rem;margin-bottom:5px}.selection-note{border-style:solid;color:var(--p)}.selection-note button{margin-top:10px;background:none;border:0;color:var(--p);font-weight:850;text-decoration:underline;cursor:pointer}
 .tabs{display:flex;justify-content:center;gap:8px;flex-wrap:wrap;margin:25px 0}.tab{border:1px solid #5f123f33;background:#fff;color:var(--p);padding:11px 18px;border-radius:99px;font-weight:750;cursor:pointer}.tab.active{background:var(--p);color:#fff}
 .panel{display:none}.panel.active{display:block}.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(260px,1fr));gap:15px}.card{background:#fff;border-radius:18px;padding:20px;box-shadow:0 8px 28px #3a172112;border:1px solid #5f123f12}.card h3{margin:6px 0;color:var(--p);font-family:Georgia,serif;font-size:1.35rem}.meta{color:var(--mut);line-height:1.6}.places{display:inline-flex;margin:13px 0;padding:7px 11px;border-radius:99px;background:#edf8f2;color:var(--ok);font-weight:800;font-size:.82rem}.places.full{background:#f9e9eb;color:#a22}.book{width:100%;border:0;border-radius:12px;padding:12px;background:var(--p);color:#fff;font-weight:800;cursor:pointer}.book:disabled{background:#aaa}.event-actions{display:grid;gap:9px}.event-actions .pay{padding:12px}.event-help{margin:9px 0 0;color:var(--mut);font-size:.76rem;line-height:1.45;text-align:center}
 dialog{border:0;border-radius:22px;padding:0;max-width:500px;width:calc(100% - 28px);box-shadow:0 28px 90px #190b1466}dialog::backdrop{background:#190b1499}.modal{padding:25px}.modal h2{color:var(--p);font-family:Georgia,serif;margin-top:0}.field{display:grid;gap:6px;margin:12px 0}.field label{font-size:.82rem;font-weight:800}.field input,.field select{width:100%;padding:12px;border:1px solid #d8cbd1;border-radius:10px}.actions{display:flex;gap:10px;margin-top:18px}.cancel{border:1px solid #ccc;background:#fff;color:#333}.notice{padding:15px;border-radius:12px;background:#edf8f2;color:var(--ok);display:none;margin-top:15px;font-weight:800;text-align:center;border:1px solid #237a5733}.questionnaire-link{display:block;margin-top:12px;padding:12px;border-radius:10px;background:var(--p);color:#fff;text-decoration:none}.fine{font-size:.76rem;color:var(--mut);line-height:1.5}.payment-step{margin:16px 0 4px;padding:14px;border-radius:14px;background:#f7f1e5;border:1px solid #5f123f22}.payment-step .fine{display:block;margin-top:8px;text-align:center}
@@ -28,6 +29,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <button class="tab" data-tab="bilans">Bilans</button>
 <button class="tab" data-tab="cours">Cours & offres</button>
 </nav>
+<div id="returnStatus" class="context-note return-status hidden" role="status"></div>
 <section id="events" class="panel active">
 <h2 class="section-title">Événements EMPOWERFIT</h2>
 <p class="section-intro">Choisissez la ville pour découvrir les prochains rendez-vous.</p>
@@ -36,7 +38,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <button class="location-tab" data-location="brignoles">Brignoles</button>
 <button class="location-tab" data-location="visio">En visio</button>
 </nav>
-<div class="context-note">Pour un événement payant, réglez d’abord votre place sur Stripe puis confirmez la réservation avec la même adresse e-mail. Les événements gratuits se réservent directement.</div>
+<div class="context-note">Pour un événement payant, choisissez votre date, renseignez vos coordonnées puis réglez sur Stripe : votre place sera confirmée automatiquement à votre retour. Les événements gratuits se réservent directement.</div>
 <h2 class="slot-title">Dates disponibles</h2>
 <div class="grid" id="eventGrid"></div>
 </section>
@@ -59,11 +61,12 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 </section>
 <section id="cours" class="panel">
 <h2 class="section-title">Cours & offres</h2>
-<p class="section-intro">Choisissez votre ville, puis votre formule. Après le paiement, réservez vos cours avec la même adresse e-mail.</p>
+<p class="section-intro">Choisissez votre ville, puis votre formule. Vos coordonnées sont mémorisées pour vous éviter de les ressaisir lorsque vous réservez vos cours.</p>
 <nav class="location-tabs" data-group="cours" aria-label="Lieu des cours">
 <button class="location-tab active" data-location="brignoles">Brignoles</button>
 <button class="location-tab" data-location="aix">Aix</button>
 </nav>
+<div id="courseJourney" class="context-note hidden selection-note"></div>
 <div class="offer-grid">
 <article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">ANNÉE SCOLAIRE</div><h3>START TEN</h3><div class="price">75 € <small>/ mois</small></div><ul><li>2 séances par semaine</li><li>De septembre à juin</li><li>Dernier prélèvement en juin</li></ul><a class="pay" href="https://buy.stripe.com/7sY3cu6ST4W68jS9X963K0d" target="_blank" rel="noopener">Choisir START TEN</a></article>
 <article class="offer" data-offer-category="cours" data-offer-location="brignoles"><div class="eyebrow">ABONNEMENT</div><h3>SERENITY</h3><div class="price">60 € <small>/ mois</small></div><ul><li>1 séance par semaine</li><li>POWERFULL à 10 €</li><li>Sans accès Recovery Room</li><li>Engagement initial de 12 mois</li></ul><a class="pay" href="https://buy.stripe.com/cNi8wO2CD2NYfMk5GT63K0a" target="_blank" rel="noopener">Choisir SERENITY</a></article>
@@ -84,22 +87,68 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <div class="grid" id="courseGrid"></div>
 </section>
 </main>
-<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail</label><input id="email" required type="email" inputmode="email" autocomplete="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}" title="Saisissez une adresse e-mail complète, par exemple nom@gmail.com."><small class="fine">Pour un achat, utilisez la même adresse e-mail sur Stripe et pour votre réservation.</small></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" inputmode="tel" autocomplete="tel" pattern="(?:\+33|0033|0)[1-9](?:[ .-]?[0-9]{2}){4}" minlength="10" maxlength="20" title="Saisissez un numéro français valide, par exemple 06 12 34 56 78 ou +33 6 12 34 56 78."><small class="fine">Format accepté : 06 12 34 56 78 ou +33 6 12 34 56 78.</small></div><label class="fine"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer cette réservation.</label><div id="bilanPaymentStep" class="payment-step hidden"><a id="bilanPayment" class="pay" href="#" rel="noopener">Payer mon bilan sur Stripe</a><small class="fine">Après le paiement, vous reviendrez automatiquement sur EMPOWERFIT pour finaliser la réservation.</small></div><div class="notice" id="notice"></div><div class="actions"><button type="button" class="book cancel" id="cancelBooking">Annuler</button><button class="book" id="submitBooking" type="submit">Vérifier et réserver</button></div></form></dialog>
+<dialog id="booking"><form class="modal" id="bookingForm" method="dialog"><h2 id="modalTitle">Réserver</h2><p class="meta" id="modalMeta"></p><input type="hidden" id="slotId"><div class="field"><label for="first">Prénom</label><input id="first" required autocomplete="given-name"></div><div class="field"><label for="last">Nom</label><input id="last" required autocomplete="family-name"></div><div class="field"><label for="email">E-mail</label><input id="email" required type="email" inputmode="email" autocomplete="email" pattern="[^\s@]+@[^\s@]+\.[^\s@]{2,}" title="Saisissez une adresse e-mail complète, par exemple nom@gmail.com."><small class="fine">Utilisez cette même adresse e-mail sur Stripe : elle relie automatiquement votre paiement à votre réservation.</small></div><div class="field"><label for="phone">Téléphone</label><input id="phone" required type="tel" inputmode="tel" autocomplete="tel" pattern="(?:\+33|0033|0)[1-9](?:[ .-]?[0-9]{2}){4}" minlength="10" maxlength="20" title="Saisissez un numéro français valide, par exemple 06 12 34 56 78 ou +33 6 12 34 56 78."><small class="fine">Format accepté : 06 12 34 56 78 ou +33 6 12 34 56 78.</small></div><label class="fine" id="consentLabel"><input id="consent" type="checkbox" required> J’accepte que mes informations soient utilisées pour gérer ma réservation et mon achat.</label><div id="paymentStep" class="payment-step hidden"><a id="paymentAction" class="pay" href="#" rel="noopener">Continuer vers le paiement sécurisé</a><small class="fine" id="paymentHelp">Après le paiement, vous reviendrez automatiquement sur EMPOWERFIT.</small></div><div class="notice" id="notice"></div><div class="actions" id="modalActions"><button type="button" class="book cancel" id="cancelBooking">Annuler</button><button class="book" id="submitBooking" type="submit">Vérifier et réserver</button></div></form></dialog>
 <footer>EMPOWERFIT STUDIO · Un studio pensé pour les femmes de 30 ans et plus.</footer>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
 const SUPABASE_URL='https://fkyieurufkxdvzovcqzj.supabase.co';
 const SUPABASE_KEY='sb_publishable_E_9CcWp8K5VJHxe2rGjJew_p9pmd-u9';
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let slots=[];
-const grids={cours:courseGrid,bilans:bilanGrid,events:eventGrid};
+const STORAGE_PENDING='empowerfit_pending_purchase';
+const STORAGE_CONTACT='empowerfit_contact';
+const STORAGE_SELECTION='empowerfit_selected_offer';
+const booking=document.getElementById('booking');
+const bookingForm=document.getElementById('bookingForm');
+const modalTitle=document.getElementById('modalTitle');
+const modalMeta=document.getElementById('modalMeta');
+const slotId=document.getElementById('slotId');
+const first=document.getElementById('first');
+const last=document.getElementById('last');
+const email=document.getElementById('email');
+const phone=document.getElementById('phone');
+const consent=document.getElementById('consent');
+const consentLabel=document.getElementById('consentLabel');
+const paymentStep=document.getElementById('paymentStep');
+const paymentAction=document.getElementById('paymentAction');
+const paymentHelp=document.getElementById('paymentHelp');
+const notice=document.getElementById('notice');
+const modalActions=document.getElementById('modalActions');
+const submitBooking=document.getElementById('submitBooking');
+const cancelBooking=document.getElementById('cancelBooking');
+const returnStatus=document.getElementById('returnStatus');
+const courseJourney=document.getElementById('courseJourney');
+const grids={cours:document.getElementById('courseGrid'),bilans:document.getElementById('bilanGrid'),events:document.getElementById('eventGrid')};
 const selectedLocations={events:'aix',bilans:'brignoles',cours:'brignoles'};
 const bilanPaymentLinks={brignoles:'https://buy.stripe.com/cNi5kC6STdsC9nW7P163K0e',aix:'https://buy.stripe.com/14A7sKdhhcoy1Vu5GT63K02',visio:'https://buy.stripe.com/cNicN4911agq57G2uH63K07'};
+let slots=[];
+let activePurchase=null;
+let selectedCourseOffer=readStored(STORAGE_SELECTION,2*60*60*1000);
 const fmtDate=v=>v?new Intl.DateTimeFormat('fr-FR',{weekday:'long',day:'numeric',month:'long',timeZone:'Europe/Paris'}).format(new Date(v)):'Date à convenir avec vous';
 const fmtTime=v=>v?new Intl.DateTimeFormat('fr-FR',{hour:'2-digit',minute:'2-digit',timeZone:'Europe/Paris'}).format(new Date(v)).replace(':',' h '):'';
 const when=s=>s.starts_at?fmtDate(s.starts_at)+' · '+fmtTime(s.starts_at):'Date à convenir avec vous';
 const esc=v=>String(v??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot',"'":'&#39;'}[c]));
 const slotLocation=s=>s.location||(/visio/i.test(s.title)?'visio':'brignoles');
+const wait=ms=>new Promise(resolve=>setTimeout(resolve,ms));
+
+function readStored(key,maxAge){
+ try{const value=JSON.parse(localStorage.getItem(key)||'null');if(!value)return null;if(maxAge&&Date.now()-Number(value.savedAt||0)>maxAge){localStorage.removeItem(key);return null}return value}catch{return null}
+}
+function offerConfig(link){
+ const card=link.closest('[data-offer-category="cours"]');
+ if(!card)return null;
+ const title=card.querySelector('h3')?.textContent.trim()||'Offre EMPOWERFIT';
+ const normalized=title.toLocaleLowerCase('fr-FR');
+ return {kind:'offer',offerType:normalized.includes('essai')?'trial':normalized.includes('carte')?'card':'subscription',title,location:card.dataset.offerLocation,paymentUrl:link.href,savedAt:Date.now()};
+}
+function renderCourseJourney(){
+ if(!selectedCourseOffer){courseJourney.classList.add('hidden');courseJourney.innerHTML='';return}
+ courseJourney.classList.remove('hidden');
+ courseJourney.innerHTML='<strong>'+esc(selectedCourseOffer.title)+' sélectionnée.</strong><br>Choisissez maintenant le cours que vous souhaitez essayer. Vous renseignerez ensuite vos coordonnées avant le paiement sécurisé.<br><button type="button" id="clearCourseSelection">Changer de formule</button>';
+ document.getElementById('clearCourseSelection').onclick=clearCourseSelection;
+}
+function clearCourseSelection(){
+ selectedCourseOffer=null;localStorage.removeItem(STORAGE_SELECTION);renderCourseJourney();render();
+}
 function render(){
  Object.entries(grids).forEach(([category,grid])=>{
   grid.innerHTML='';
@@ -108,8 +157,11 @@ function render(){
   visible.forEach(s=>{const flexible=!s.starts_at,left=s.capacity-Number(s.booked),full=!flexible&&left<=0;const el=document.createElement('article');el.className='card';
    const availability=flexible?'<div class="places">Sur rendez-vous</div>':'<div class="places '+(full?'full':'')+'">'+(full?'Complet':left+' place'+(left>1?'s':'')+' disponible'+(left>1?'s':''))+'</div>';
    const paidEvent=s.category==='events'&&Number(s.price_cents)>0;
-   const bookingButton='<button class="book" '+(full?'disabled':'')+' data-id="'+s.id+'">'+(full?'Liste complète':flexible&&s.category==='bilans'?'Réserver ce bilan':s.category==='events'?(paidEvent?'2. J’ai payé, réserver':'Réserver gratuitement'):'Réserver cette place')+'</button>';
-   const actions=s.category==='events'?(paidEvent?'<div class="event-actions">'+(s.payment_link_url?'<a class="pay" href="'+esc(s.payment_link_url)+'" target="_blank" rel="noopener">1. Payer ma place</a>':'<button class="book" disabled>Paiement bientôt disponible</button>')+bookingButton+'</div><p class="event-help">Utilisez la même adresse e-mail pour le paiement et la réservation.</p>':bookingButton+'<p class="event-help">Cet événement est gratuit, aucun paiement n’est nécessaire.</p>'):bookingButton;
+   const trialChoice=s.category==='cours'&&selectedCourseOffer?.offerType==='trial'&&selectedCourseOffer.location===slotLocation(s);
+   const label=full?'Liste complète':flexible&&s.category==='bilans'?'Réserver ce bilan':paidEvent?'Réserver et payer':s.category==='events'?'Réserver gratuitement':trialChoice?'Choisir ce cours d’essai':'Réserver cette place';
+   const usable=!(paidEvent&&!s.payment_link_url);
+   const bookingButton='<button class="book" '+(full||!usable?'disabled':'')+' data-id="'+s.id+'">'+(!usable?'Paiement bientôt disponible':label)+'</button>';
+   const actions=s.category==='events'?(bookingButton+'<p class="event-help">'+(paidEvent?'Vos coordonnées, votre paiement et votre réservation sont reliés automatiquement.':'Cet événement est gratuit, aucun paiement n’est nécessaire.')+'</p>'):bookingButton;
    el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+esc(s.title)+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div>'+availability+actions;
    grid.append(el);
   });
@@ -123,22 +175,183 @@ function render(){
   if(empty)empty.classList.toggle('hidden',offers.some(card=>card.dataset.offerLocation===location));
  });
  document.querySelectorAll('[data-terms-location]').forEach(terms=>terms.classList.toggle('hidden',selectedLocations.cours!==terms.dataset.termsLocation));
+ renderCourseJourney();
 }
-function showBilans(location){document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));document.querySelector('.tab[data-tab="bilans"]').classList.add('active');document.getElementById('bilans').classList.add('active');selectedLocations.bilans=location||'visio';document.querySelectorAll('[data-group="bilans"] .location-tab').forEach(x=>x.classList.toggle('active',x.dataset.location===selectedLocations.bilans));render()}
-async function loadSlots(){const {data,error}=await db.rpc('list_available_items_v2');if(error){console.error(error);slots=[]}else slots=(data||[]).filter(x=>x.title?.trim().toLocaleLowerCase('fr-FR')!=='bilan initial obligatoire');render()}
-function openBooking(id){const s=slots.find(x=>x.id===id);if(!s)return;slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';notice.style.display='none';const isBilan=s.category==='bilans';bilanPaymentStep.classList.toggle('hidden',!isBilan);submitBooking.classList.toggle('hidden',isBilan);if(isBilan)bilanPayment.href=bilanPaymentLinks[slotLocation(s)]||'#';else submitBooking.textContent='Vérifier et réserver';booking.showModal()}
-function validContact(){const emailValue=email.value.trim().toLowerCase(),phoneValue=phone.value.trim();const emailValid=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailValue),phoneValid=/^(?:\+33|0033|0)[1-9](?:[ .-]?[0-9]{2}){4}$/.test(phoneValue);if(!first.value.trim()||!last.value.trim()||!emailValid||!phoneValid||!consent.checked){notice.textContent=!first.value.trim()||!last.value.trim()?'Renseignez votre prénom et votre nom.':!emailValid?'Saisissez une adresse e-mail complète et valide.':!phoneValid?'Saisissez un numéro français valide.':'Veuillez accepter l’utilisation de vos informations pour la réservation.';notice.style.display='block';notice.style.background='#f9e9eb';notice.style.color='#a22';return false}return true}
-function savePendingBilan(){const s=slots.find(x=>x.id===slotId.value);if(!s||s.category!=='bilans'||!validContact())return false;localStorage.setItem('empowerfit_pending_bilan',JSON.stringify({slotId:s.id,location:slotLocation(s),first:first.value.trim(),last:last.value.trim(),email:email.value.trim().toLowerCase(),phone:phone.value.trim(),savedAt:Date.now()}));return true}
-bilanPayment.addEventListener('click',e=>{if(!savePendingBilan()){e.preventDefault();return}bilanPayment.href=bilanPaymentLinks[slotLocation(slots.find(x=>x.id===slotId.value))]||'#'});
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));b.classList.add('active');document.getElementById(b.dataset.tab).classList.add('active')});
-document.querySelectorAll('.location-tab').forEach(b=>b.onclick=()=>{const group=b.closest('[data-group]').dataset.group;selectedLocations[group]=b.dataset.location;b.parentElement.querySelectorAll('.location-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');render()});
-const cancelBooking=document.getElementById('cancelBooking');
-function closeBooking(){booking.close();bookingForm.reset();notice.style.display='none';bilanPaymentStep.classList.add('hidden');submitBooking.classList.remove('hidden')}
+function showPanel(category,location){
+ document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
+ document.querySelector('.tab[data-tab="'+category+'"]')?.classList.add('active');
+ document.getElementById(category)?.classList.add('active');
+ if(location){selectedLocations[category]=location;document.querySelectorAll('[data-group="'+category+'"] .location-tab').forEach(x=>x.classList.toggle('active',x.dataset.location===location))}
+ render();
+}
+async function loadSlots(){
+ const {data,error}=await db.rpc('list_available_items_v2');
+ if(error){console.error(error);slots=[]}else slots=(data||[]).filter(x=>x.title?.trim().toLocaleLowerCase('fr-FR')!=='bilan initial obligatoire');
+ render();
+}
+function restoreContact(){
+ const saved=readStored(STORAGE_CONTACT,180*24*60*60*1000);if(!saved)return;
+ first.value=saved.first||'';last.value=saved.last||'';email.value=saved.email||'';phone.value=saved.phone||'';
+}
+function saveContact(){
+ const value={first:first.value.trim(),last:last.value.trim(),email:email.value.trim().toLowerCase(),phone:phone.value.trim(),savedAt:Date.now()};
+ localStorage.setItem(STORAGE_CONTACT,JSON.stringify(value));return value;
+}
+function resetModal(){
+ bookingForm.querySelectorAll('.field').forEach(x=>x.classList.remove('hidden'));
+ consentLabel.classList.remove('hidden');modalActions.classList.remove('hidden');cancelBooking.classList.remove('hidden');
+ paymentStep.classList.add('hidden');submitBooking.classList.remove('hidden');submitBooking.disabled=false;submitBooking.textContent='Vérifier et réserver';
+ notice.style.display='none';notice.innerHTML='';slotId.value='';activePurchase=null;restoreContact();
+}
+function configurePayment(purchase,label){
+ activePurchase=purchase;paymentStep.classList.remove('hidden');submitBooking.classList.add('hidden');
+ paymentAction.href=purchase.paymentUrl||'#';paymentAction.textContent=label||'Continuer vers le paiement sécurisé';
+ paymentHelp.textContent=purchase.kind==='booking'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici et votre réservation sera confirmée.':'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir vos prochains cours.';
+}
+function openBooking(id){
+ const s=slots.find(x=>x.id===id);if(!s)return;
+ resetModal();slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';
+ const location=slotLocation(s);
+ if(s.category==='bilans'){
+  configurePayment({kind:'booking',category:'bilans',location,slotId:s.id,title:s.title,paymentUrl:bilanPaymentLinks[location]},'Payer et confirmer mon bilan');
+ }else if(s.category==='events'&&Number(s.price_cents)>0){
+  configurePayment({kind:'booking',category:'events',location,slotId:s.id,title:s.title,paymentUrl:s.payment_link_url},'Payer et confirmer ma place');
+ }else if(s.category==='cours'&&selectedCourseOffer?.offerType==='trial'&&selectedCourseOffer.location===location){
+  configurePayment({kind:'booking',category:'cours',location,slotId:s.id,title:s.title,offerTitle:selectedCourseOffer.title,offerType:'trial',paymentUrl:selectedCourseOffer.paymentUrl},'Payer et confirmer mon cours d’essai');
+ }
+ booking.showModal();
+}
+function openOfferPurchase(config){
+ resetModal();modalTitle.textContent=config.title;modalMeta.textContent=config.offerType==='card'?'Votre carte sera activée après le paiement.':'Votre formule sera activée après le paiement.';
+ configurePayment(config,config.offerType==='card'?'Acheter ma carte sur Stripe':'Continuer vers le paiement sécurisé');
+ booking.showModal();
+}
+function validContact(){
+ const emailValue=email.value.trim().toLowerCase(),phoneValue=phone.value.trim();
+ const emailValid=/^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/.test(emailValue),phoneValid=/^(?:\+33|0033|0)[1-9](?:[ .-]?[0-9]{2}){4}$/.test(phoneValue);
+ if(!first.value.trim()||!last.value.trim()||!emailValid||!phoneValid||!consent.checked){
+  notice.textContent=!first.value.trim()||!last.value.trim()?'Renseignez votre prénom et votre nom.':!emailValid?'Saisissez une adresse e-mail complète et valide.':!phoneValid?'Saisissez un numéro français valide.':'Veuillez accepter l’utilisation de vos informations.';
+  notice.style.display='block';notice.style.background='#f9e9eb';notice.style.color='#a22';return false;
+ }
+ return true;
+}
+function savePendingPurchase(){
+ if(!activePurchase||!activePurchase.paymentUrl||!validContact())return false;
+ const contact=saveContact();
+ localStorage.setItem(STORAGE_PENDING,JSON.stringify({...activePurchase,...contact,savedAt:Date.now()}));
+ const stripeUrl=new URL(activePurchase.paymentUrl);
+ stripeUrl.searchParams.set('locked_prefilled_email',contact.email);
+ stripeUrl.searchParams.set('locale','fr');
+ paymentAction.href=stripeUrl.toString();
+ return true;
+}
+paymentAction.addEventListener('click',e=>{if(!savePendingPurchase())e.preventDefault()});
+document.querySelectorAll('[data-offer-category="cours"] .pay').forEach(link=>{
+ const config=offerConfig(link);if(!config)return;link.target='_self';
+ link.addEventListener('click',e=>{
+  e.preventDefault();
+  if(config.offerType==='trial'){
+   selectedCourseOffer={...config,savedAt:Date.now()};localStorage.setItem(STORAGE_SELECTION,JSON.stringify(selectedCourseOffer));
+   showPanel('cours',config.location);document.getElementById('courseGrid').scrollIntoView({behavior:'smooth',block:'start'});
+  }else{if(selectedCourseOffer)clearCourseSelection();openOfferPurchase({...config,savedAt:Date.now()})}
+ });
+});
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showPanel(b.dataset.tab,selectedLocations[b.dataset.tab]));
+document.querySelectorAll('.location-tab').forEach(b=>b.onclick=()=>{
+ const group=b.closest('[data-group]').dataset.group;
+ if(group==='cours'&&selectedCourseOffer&&selectedCourseOffer.location!==b.dataset.location)clearCourseSelection();
+ selectedLocations[group]=b.dataset.location;b.parentElement.querySelectorAll('.location-tab').forEach(x=>x.classList.remove('active'));b.classList.add('active');render();
+});
+function closeBooking(){booking.close();bookingForm.reset();resetModal()}
 cancelBooking.addEventListener('click',closeBooking);
 booking.addEventListener('click',e=>{if(e.target===booking)closeBooking()});
-async function confirmReservation(payload,automatic=false){const chosen=slots.find(x=>x.id===payload.slotId);if(!chosen)return {error:{message:'Le créneau choisi n’est plus disponible.'}};const {data:bookingId,error}=await db.rpc('reserve_paid_item',{p_item_id:payload.slotId,p_first_name:payload.first,p_last_name:payload.last,p_email:payload.email,p_phone:payload.phone});if(error)return {error};const isVisioBilan=chosen.category==='bilans'&&slotLocation(chosen)==='visio';let questionnaireToken=null;if(isVisioBilan){const r=await db.rpc('get_bilan_questionnaire_token',{p_booking_id:bookingId,p_email:payload.email});questionnaireToken=r.data||null}return {bookingId,chosen,isVisioBilan,questionnaireToken,automatic}}
-async function handleStripeReturn(){const params=new URLSearchParams(location.search);if(params.get('payment')!=='success')return;let pending=null;try{pending=JSON.parse(localStorage.getItem('empowerfit_pending_bilan')||'null')}catch{};history.replaceState({},'',location.pathname);if(!pending||Date.now()-Number(pending.savedAt||0)>86400000){showBilans('visio');return}showBilans(pending.location);const result=await confirmReservation(pending,true);slotId.value=pending.slotId;modalTitle.textContent='Confirmation de votre bilan';modalMeta.textContent='Vérification du paiement et de la réservation';bookingForm.querySelectorAll('.field, #consent, #bilanPaymentStep, .actions').forEach(x=>x.classList.add('hidden'));notice.style.display='block';if(result.error){notice.textContent='Le paiement est revenu vers EMPOWERFIT, mais la réservation n’a pas encore pu être confirmée automatiquement. Réessayez dans quelques secondes ou contactez-nous si le problème persiste.';notice.style.background='#f9e9eb';notice.style.color='#a22'}else{localStorage.removeItem('empowerfit_pending_bilan');notice.style.background='#edf8f2';notice.style.color='#237a57';notice.innerHTML=result.isVisioBilan?'Votre réservation est confirmée.'+(result.questionnaireToken?'<a class="questionnaire-link" href="questionnaire-bilan.html?token='+encodeURIComponent(result.questionnaireToken)+'">Préparer mon bilan maintenant</a>':''):'Votre demande de bilan est confirmée. Nous vous contacterons pour convenir du rendez-vous.';await loadSlots()}booking.showModal()}
-bookingForm.onsubmit=async e=>{e.preventDefault();if(!validContact())return;const submit=bookingForm.querySelector('[type=submit]');submit.disabled=true;submit.textContent='Confirmation…';const payload={slotId:slotId.value,first:first.value.trim(),last:last.value.trim(),email:email.value.trim().toLowerCase(),phone:phone.value.trim()};const result=await confirmReservation(payload,false);notice.textContent=result.error?(result.error.message||'Réservation impossible.'):(result.chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');notice.style.display='block';notice.style.background=result.error?'#f9e9eb':'#edf8f2';notice.style.color=result.error?'#a22':'#237a57';if(!result.error&&result.isVisioBilan&&result.questionnaireToken)notice.innerHTML='Votre réservation est confirmée.<a class="questionnaire-link" href="questionnaire-bilan.html?token='+encodeURIComponent(result.questionnaireToken)+'">Préparer mon bilan maintenant</a>';submit.disabled=false;submit.textContent='Vérifier et réserver';if(!result.error){await loadSlots();if(!result.isVisioBilan)setTimeout(()=>{booking.close();bookingForm.reset()},5000)}};
-(async()=>{await loadSlots();await handleStripeReturn()})();setInterval(loadSlots,20000);
+async function confirmReservation(payload){
+ const chosen=slots.find(x=>x.id===payload.slotId);
+ if(!chosen)return {error:{message:'Le créneau choisi n’est plus disponible.'}};
+ const {data:bookingId,error}=await db.rpc('reserve_paid_item',{p_item_id:payload.slotId,p_first_name:payload.first,p_last_name:payload.last,p_email:payload.email,p_phone:payload.phone});
+ if(error)return {error,chosen};
+ const isVisioBilan=chosen.category==='bilans'&&slotLocation(chosen)==='visio';
+ let questionnaireToken=null;
+ if(isVisioBilan){const r=await db.rpc('get_bilan_questionnaire_token',{p_booking_id:bookingId,p_email:payload.email});questionnaireToken=r.data||null}
+ return {bookingId,chosen,isVisioBilan,questionnaireToken};
+}
+function retryablePaymentError(error){
+ return /aucun paiement|crédit actif|pas encore configuré|not found/i.test(error?.message||'');
+}
+async function confirmWithRetry(payload){
+ let result;
+ for(let attempt=0;attempt<9;attempt++){
+  result=await confirmReservation(payload);
+  if(!result.error||/déjà réservé/i.test(result.error.message||''))return result;
+  if(!retryablePaymentError(result.error)||attempt===8)return result;
+  await wait(1500);
+ }
+ return result;
+}
+function legacyPending(){
+ const old=readStored('empowerfit_pending_bilan',24*60*60*1000);
+ return old?{...old,kind:'booking',category:'bilans',title:'Bilan EMPOWERFIT'}:null;
+}
+function hideModalFormForReturn(){
+ bookingForm.querySelectorAll('.field').forEach(x=>x.classList.add('hidden'));
+ consentLabel.classList.add('hidden');paymentStep.classList.add('hidden');modalActions.classList.add('hidden');
+ notice.style.display='block';notice.style.background='#edf8f2';notice.style.color='#237a57';
+}
+function successMessage(result){
+ if(result.isVisioBilan)return 'Votre réservation est confirmée.'+(result.questionnaireToken?'<a class="questionnaire-link" href="questionnaire-bilan.html?token='+encodeURIComponent(result.questionnaireToken)+'">Préparer mon bilan maintenant</a>':'');
+ if(result.chosen?.category==='bilans'&&!result.chosen.starts_at)return 'Votre demande de bilan est confirmée. Nous vous contacterons pour convenir du rendez-vous.';
+ if(result.chosen?.category==='events')return 'Votre place est confirmée. Vous recevrez les informations pratiques par e-mail.';
+ if(result.chosen?.category==='cours')return 'Votre cours est confirmé. Bienvenue dans la FITÉRUS Révolution.';
+ return 'Votre réservation est confirmée.';
+}
+async function completePaidBooking(pending){
+ const result=await confirmWithRetry(pending);
+ if(!result.error){
+  localStorage.removeItem(STORAGE_PENDING);localStorage.removeItem('empowerfit_pending_bilan');
+  if(pending.offerType==='trial')clearCourseSelection();
+  notice.style.background='#edf8f2';notice.style.color='#237a57';notice.innerHTML=successMessage(result);await loadSlots();return;
+ }
+ if(/déjà réservé/i.test(result.error.message||'')){
+  localStorage.removeItem(STORAGE_PENDING);localStorage.removeItem('empowerfit_pending_bilan');
+  notice.style.background='#edf8f2';notice.style.color='#237a57';notice.textContent='Cette réservation est déjà confirmée avec cette adresse e-mail.';return;
+ }
+ notice.style.background='#f9e9eb';notice.style.color='#a22';
+ notice.innerHTML='Le paiement a bien été transmis, mais la réservation n’est pas encore confirmée. Patientez quelques secondes puis réessayez.<button class="pay" type="button" id="retryPaidBooking" style="margin-top:12px">Réessayer la confirmation</button>';
+ document.getElementById('retryPaidBooking').onclick=async e=>{e.currentTarget.disabled=true;e.currentTarget.textContent='Vérification…';await completePaidBooking(pending)};
+}
+function showReturnMessage(html){
+ returnStatus.innerHTML=html;returnStatus.classList.remove('hidden');returnStatus.scrollIntoView({behavior:'smooth',block:'center'});
+}
+async function handleStripeReturn(){
+ const params=new URLSearchParams(location.search);if(params.get('payment')!=='success')return;
+ const pending=readStored(STORAGE_PENDING,24*60*60*1000)||legacyPending();
+ params.delete('payment');params.delete('session_id');history.replaceState({},'',location.pathname+(params.toString()?'?'+params:'')+location.hash);
+ if(!pending){
+  showPanel('cours','brignoles');showReturnMessage('<strong>Retour de paiement reçu.</strong>Choisissez votre service ou votre cours avec la même adresse e-mail utilisée sur Stripe.');return;
+ }
+ saveContactFromPending(pending);
+ if(pending.kind==='offer'){
+  localStorage.removeItem(STORAGE_PENDING);if(selectedCourseOffer)clearCourseSelection();showPanel('cours',pending.location||'brignoles');
+  showReturnMessage('<strong>Votre achat a bien été transmis.</strong>Votre accès s’active généralement en quelques secondes. Vous pouvez maintenant choisir vos cours : vos coordonnées sont déjà mémorisées.');return;
+ }
+ showPanel(pending.category||'bilans',pending.location);
+ resetModal();slotId.value=pending.slotId||'';modalTitle.textContent='Confirmation de votre réservation';modalMeta.textContent='Nous relions votre paiement Stripe à votre réservation…';
+ hideModalFormForReturn();notice.textContent='Validation du paiement en cours…';booking.showModal();
+ await completePaidBooking(pending);
+}
+function saveContactFromPending(pending){
+ if(!pending?.email)return;
+ localStorage.setItem(STORAGE_CONTACT,JSON.stringify({first:pending.first||'',last:pending.last||'',email:pending.email,phone:pending.phone||'',savedAt:Date.now()}));
+}
+bookingForm.onsubmit=async e=>{
+ e.preventDefault();if(!validContact())return;const submit=submitBooking;submit.disabled=true;submit.textContent='Confirmation…';
+ const payload={slotId:slotId.value,...saveContact()};const result=await confirmReservation(payload);
+ notice.textContent=result.error?(result.error.message||'Réservation impossible.'):(result.chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');
+ notice.style.display='block';notice.style.background=result.error?'#f9e9eb':'#edf8f2';notice.style.color=result.error?'#a22':'#237a57';
+ submit.disabled=false;submit.textContent='Vérifier et réserver';
+ if(!result.error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
+};
+(async()=>{await loadSlots();await handleStripeReturn()})();
+setInterval(loadSlots,20000);
 </script>
 </body></html>
