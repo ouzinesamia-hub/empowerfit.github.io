@@ -32,6 +32,25 @@ function nextJulyFirst(): Date {
   return new Date(Date.UTC(year, 6, 1, 0, 0, 0))
 }
 
+function addUtcMonths(epochSeconds: number, months: number): number {
+  const source = new Date(epochSeconds * 1000)
+  const firstOfTargetMonth = new Date(Date.UTC(
+    source.getUTCFullYear(),
+    source.getUTCMonth() + months,
+    1,
+    source.getUTCHours(),
+    source.getUTCMinutes(),
+    source.getUTCSeconds(),
+  ))
+  const lastDay = new Date(Date.UTC(
+    firstOfTargetMonth.getUTCFullYear(),
+    firstOfTargetMonth.getUTCMonth() + 1,
+    0,
+  )).getUTCDate()
+  firstOfTargetMonth.setUTCDate(Math.min(source.getUTCDate(), lastDay))
+  return Math.floor(firstOfTargetMonth.getTime() / 1000)
+}
+
 async function offerForSession(session: Stripe.Checkout.Session) {
   const paymentLinkId = typeof session.payment_link === 'string'
     ? session.payment_link
@@ -68,13 +87,28 @@ async function grantCheckout(session: Stripe.Checkout.Session) {
   const customerId = typeof session.customer === 'string'
     ? session.customer
     : session.customer?.id || null
-  const validUntil = offer.validity_days
+  let validUntil = offer.validity_days
     ? new Date(Date.now() + offer.validity_days * 86400000).toISOString()
     : offer.ends_in_june
     ? nextJulyFirst().toISOString()
     : null
 
-  if (offer.ends_in_june && subscriptionId) {
+  if (offer.billing_cycles && subscriptionId) {
+    const billingCycles = Number(offer.billing_cycles)
+    if (!Number.isInteger(billingCycles) || billingCycles < 1) {
+      throw new Error(`Nombre d’échéances invalide pour l’offre ${offer.code}`)
+    }
+    const subscription = await stripe.subscriptions.retrieve(subscriptionId)
+    const cancelAt = addUtcMonths(subscription.billing_cycle_anchor, billingCycles)
+    await stripe.subscriptions.update(subscriptionId, {
+      cancel_at: cancelAt,
+      metadata: {
+        empowerfit_offer_code: offer.code,
+        empowerfit_billing_cycles: String(billingCycles),
+      },
+    })
+    validUntil = new Date(cancelAt * 1000).toISOString()
+  } else if (offer.ends_in_june && subscriptionId) {
     await stripe.subscriptions.update(subscriptionId, {
       cancel_at: Math.floor(new Date(validUntil).getTime() / 1000),
     })
