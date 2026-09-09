@@ -91,7 +91,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <h2 class="section-title">Programmes FITÉRUS</h2>
 <p class="section-intro">Deux chemins, une même ambition : construire une force durable et entrer pleinement dans la FITÉRUS Révolution.</p>
 <div class="offer-grid program-grid">
-<article class="offer" data-offer-category="programmes" data-offer-location="online"><div class="eyebrow">8 SEMAINES · EN AUTONOMIE GUIDÉE</div><h3>FITÉRUS Impulsion</h3><div class="price">97 € <small>· paiement unique</small></div><ul><li>Programme Force & Longévité sélectionné à l’issue de votre bilan</li><li>Séances et progression guidées</li><li>Suivi hebdomadaire via un questionnaire</li><li>Accès au groupe WhatsApp pendant 8 semaines</li></ul><p class="program-note">Un bilan visio préalable et obligatoire à 30 € permet de déterminer le programme le plus adapté à votre profil avant de commencer.</p><a class="pay" data-offer-type="program_impulsion" href="https://buy.stripe.com/aFa4gydhh88ias0c5h63K0m" rel="noopener">Choisir FITÉRUS Impulsion</a></article>
+<article class="offer" data-offer-category="programmes" data-offer-location="online"><div class="eyebrow">8 SEMAINES · EN AUTONOMIE GUIDÉE</div><h3>FITÉRUS Impulsion</h3><div class="price">97 € <small>· paiement unique</small></div><ul><li>Programme Force & Longévité sélectionné à l’issue de votre bilan</li><li>Séances et progression guidées</li><li>Suivi hebdomadaire via un questionnaire</li><li>Accès au groupe WhatsApp pendant 8 semaines</li></ul><p class="program-note">Un bilan visio préalable et obligatoire à 30 € permet de déterminer le programme le plus adapté à votre profil avant de commencer.</p><a class="pay" data-offer-type="program_impulsion_bilan" href="https://buy.stripe.com/5kQ9AS3GHgEO2Zy1qD63K0n" rel="noopener">Réserver mon bilan préalable · 30 €</a></article>
 <article class="offer featured" data-offer-category="programmes" data-offer-location="online"><div class="eyebrow">3 MOIS · ACCOMPAGNEMENT PREMIUM</div><h3>FITÉRUS Révolution</h3><div class="price">297 € <small>· ou 3 × 99 €</small></div><ul><li>Bilan initial inclus</li><li>Programme conçu sur mesure selon votre profil et vos objectifs</li><li>3 rendez-vous en visio</li><li>Ajustements aux semaines 5 et 9</li><li>Séances et progression suivies</li><li>Accès au groupe WhatsApp pendant 3 mois</li><li>Questions personnelles et points sensibles en message privé</li></ul><a class="pay" data-offer-type="program_revolution_full" href="https://buy.stripe.com/14A7sK0uvagq8jSglx63K0k" rel="noopener">Choisir le paiement comptant · 297 €</a><a class="pay secondary" data-offer-type="program_revolution_3x" href="https://buy.stripe.com/3cI00ib9988idEc9X963K0l" rel="noopener">Choisir 3 mensualités · 99 €</a><p class="program-note">Le paiement en trois fois constitue un engagement total de 297 € et s’arrête automatiquement après la troisième mensualité.</p></article>
 </div>
 </section>
@@ -106,6 +106,7 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const STORAGE_PENDING='empowerfit_pending_purchase';
 const STORAGE_CONTACT='empowerfit_contact';
 const STORAGE_SELECTION='empowerfit_selected_offer';
+const STORAGE_PREPAID_BILAN='empowerfit_prepaid_bilan';
 const booking=document.getElementById('booking');
 const bookingForm=document.getElementById('bookingForm');
 const modalTitle=document.getElementById('modalTitle');
@@ -215,13 +216,16 @@ function resetModal(){
 function configurePayment(purchase,label){
  activePurchase=purchase;paymentStep.classList.remove('hidden');submitBooking.classList.add('hidden');
  paymentAction.href=purchase.paymentUrl||'#';paymentAction.textContent=label||'Continuer vers le paiement sécurisé';
- paymentHelp.textContent=purchase.kind==='booking'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici et votre réservation sera confirmée.':purchase.category==='programmes'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour poursuivre votre entrée dans le programme.':'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir vos prochains cours.';
+ paymentHelp.textContent=purchase.offerType==='program_impulsion_bilan'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir votre créneau de bilan.':purchase.kind==='booking'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici et votre réservation sera confirmée.':purchase.category==='programmes'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour poursuivre votre entrée dans le programme.':'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir vos prochains cours.';
 }
 function openBooking(id){
  const s=slots.find(x=>x.id===id);if(!s)return;
  resetModal();slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';
  const location=slotLocation(s);
- if(s.category==='bilans'){
+ const prepaidBilan=location==='visio'?readStored(STORAGE_PREPAID_BILAN,24*60*60*1000):null;
+ if(s.category==='bilans'&&prepaidBilan){
+  modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min · bilan déjà réglé';
+ }else if(s.category==='bilans'){
   configurePayment({kind:'booking',category:'bilans',location,slotId:s.id,title:s.title,paymentUrl:bilanPaymentLinks[location]},'Payer et confirmer mon bilan');
  }else if(s.category==='events'&&Number(s.price_cents)>0){
   configurePayment({kind:'booking',category:'events',location,slotId:s.id,title:s.title,paymentUrl:s.payment_link_url},'Payer et confirmer ma place');
@@ -231,8 +235,9 @@ function openBooking(id){
  booking.showModal();
 }
 function openOfferPurchase(config){
- resetModal();modalTitle.textContent=config.title;modalMeta.textContent=config.offerType==='card'?'Votre carte sera activée après le paiement.':config.category==='programmes'?'Votre accompagnement commencera après la validation du paiement.':'Votre formule sera activée après le paiement.';
- const label=config.offerType==='card'?'Acheter ma carte sur Stripe':config.offerType==='program_revolution_full'?'Payer 297 € sur Stripe':config.offerType==='program_revolution_3x'?'Commencer mes 3 mensualités de 99 €':config.offerType==='program_impulsion'?'Payer 97 € sur Stripe':'Continuer vers le paiement sécurisé';
+ const isImpulsionBilan=config.offerType==='program_impulsion_bilan';
+ resetModal();modalTitle.textContent=config.title;modalMeta.textContent=isImpulsionBilan?'Après le paiement, vous choisirez votre créneau de bilan visio.':config.offerType==='card'?'Votre carte sera activée après le paiement.':config.category==='programmes'?'Votre accompagnement commencera après la validation du paiement.':'Votre formule sera activée après le paiement.';
+ const label=isImpulsionBilan?'Payer mon bilan préalable · 30 €':config.offerType==='card'?'Acheter ma carte sur Stripe':config.offerType==='program_revolution_full'?'Payer 297 € sur Stripe':config.offerType==='program_revolution_3x'?'Commencer mes 3 mensualités de 99 €':config.offerType==='program_impulsion'?'Payer 97 € sur Stripe':'Continuer vers le paiement sécurisé';
  configurePayment(config,label);
  booking.showModal();
 }
@@ -342,6 +347,12 @@ async function handleStripeReturn(){
  saveContactFromPending(pending);
  if(pending.kind==='offer'){
   localStorage.removeItem(STORAGE_PENDING);if(selectedCourseOffer)clearCourseSelection();
+  if(pending.offerType==='program_impulsion_bilan'){
+   localStorage.setItem(STORAGE_PREPAID_BILAN,JSON.stringify({first:pending.first,last:pending.last,email:pending.email,phone:pending.phone,savedAt:Date.now()}));
+   showPanel('bilans','visio');
+   showReturnMessage('<strong>Votre bilan préalable est réglé.</strong>Choisissez maintenant votre créneau de bilan visio ci-dessous.');
+   document.getElementById('bilanGrid').scrollIntoView({behavior:'smooth',block:'start'});return;
+  }
   if(pending.category==='programmes'){
    showPanel('programmes','online');
    showReturnMessage('<strong>Bienvenue dans votre parcours FITÉRUS.</strong>Votre inscription a bien été transmise. La prochaine étape sera l’activation de votre bilan, de votre espace d’entraînement et de votre accompagnement.');return;
@@ -360,11 +371,11 @@ function saveContactFromPending(pending){
 }
 bookingForm.onsubmit=async e=>{
  e.preventDefault();if(!validContact())return;const submit=submitBooking;submit.disabled=true;submit.textContent='Confirmation…';
- const payload={slotId:slotId.value,...saveContact()};const result=await confirmReservation(payload);
+ const payload={slotId:slotId.value,...saveContact()};const result=await confirmWithRetry(payload);
  notice.textContent=result.error?(result.error.message||'Réservation impossible.'):(result.chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');
  notice.style.display='block';notice.style.background=result.error?'#f9e9eb':'#edf8f2';notice.style.color=result.error?'#a22':'#237a57';
  submit.disabled=false;submit.textContent='Vérifier et réserver';
- if(!result.error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
+ if(!result.error){if(result.chosen?.category==='bilans'&&slotLocation(result.chosen)==='visio')localStorage.removeItem(STORAGE_PREPAID_BILAN);await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
 (async()=>{await loadSlots();await handleStripeReturn()})();
 setInterval(loadSlots,20000);
