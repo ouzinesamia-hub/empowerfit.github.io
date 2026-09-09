@@ -91,7 +91,7 @@ footer{text-align:center;color:var(--mut);font-size:.8rem;padding:25px}
 <h2 class="section-title">Programmes FITÉRUS</h2>
 <p class="section-intro">Deux chemins, une même ambition : construire une force durable et entrer pleinement dans la FITÉRUS Révolution.</p>
 <div class="offer-grid program-grid">
-<article class="offer" data-offer-category="programmes" data-offer-location="online"><div class="eyebrow">8 SEMAINES · EN AUTONOMIE GUIDÉE</div><h3>FITÉRUS Impulsion</h3><div class="price">97 € <small>· paiement unique</small></div><ul><li>Programme Force & Longévité sélectionné à l’issue de votre bilan</li><li>Séances et progression guidées</li><li>Suivi hebdomadaire via un questionnaire</li><li>Accès au groupe WhatsApp pendant 8 semaines</li></ul><p class="program-note">Un bilan visio préalable et obligatoire à 30 € permet de déterminer le programme le plus adapté à votre profil avant de commencer.</p><a class="pay" data-offer-type="program_impulsion_bilan" href="https://buy.stripe.com/5kQ9AS3GHgEO2Zy1qD63K0n" rel="noopener">Réserver mon bilan préalable · 30 €</a></article>
+<article class="offer" data-offer-category="programmes" data-offer-location="online"><div class="eyebrow">8 SEMAINES · EN AUTONOMIE GUIDÉE</div><h3>FITÉRUS Impulsion</h3><div class="price">127 € <small>· bilan inclus · paiement unique</small></div><ul><li>Programme Force & Longévité sélectionné à l’issue de votre bilan</li><li>Séances et progression guidées</li><li>Suivi hebdomadaire via un questionnaire</li><li>Accès au groupe WhatsApp pendant 8 semaines</li></ul><p class="program-note">Tarif total : bilan visio préalable 30 € + programme de 8 semaines 97 €. Le bilan permet de déterminer le programme le plus adapté à votre profil avant de commencer.</p><a class="pay" data-offer-type="program_impulsion_bilan" href="https://buy.stripe.com/fZu7sK6STcoy43Cc5h63K0o" rel="noopener">Choisir mon créneau et rejoindre Impulsion · 127 €</a></article>
 <article class="offer featured" data-offer-category="programmes" data-offer-location="online"><div class="eyebrow">3 MOIS · ACCOMPAGNEMENT PREMIUM</div><h3>FITÉRUS Révolution</h3><div class="price">297 € <small>· ou 3 × 99 €</small></div><ul><li>Bilan initial inclus</li><li>Programme conçu sur mesure selon votre profil et vos objectifs</li><li>3 rendez-vous en visio</li><li>Ajustements aux semaines 5 et 9</li><li>Séances et progression suivies</li><li>Accès au groupe WhatsApp pendant 3 mois</li><li>Questions personnelles et points sensibles en message privé</li></ul><a class="pay" data-offer-type="program_revolution_full" href="https://buy.stripe.com/14A7sK0uvagq8jSglx63K0k" rel="noopener">Choisir le paiement comptant · 297 €</a><a class="pay secondary" data-offer-type="program_revolution_3x" href="https://buy.stripe.com/3cI00ib9988idEc9X963K0l" rel="noopener">Choisir 3 mensualités · 99 €</a><p class="program-note">Le paiement en trois fois constitue un engagement total de 297 € et s’arrête automatiquement après la troisième mensualité.</p></article>
 </div>
 </section>
@@ -167,10 +167,24 @@ function renderBilanOffer(){
  const offer=document.querySelector('[data-offer-category="bilans"][data-offer-location="visio"]');
  if(!offer)return;
  const isImpulsion=Boolean(selectedImpulsionBilan());
- offer.querySelector('h3').textContent=isImpulsion?'Votre bilan préalable Impulsion':'Votre bilan à distance';
- offer.querySelector('.price').innerHTML=isImpulsion?'30 € <small>· 45 minutes</small>':'45 € <small>· 45 minutes</small>';
+ const copy=isImpulsion?[
+  '<strong>1. Choisissez votre créneau.</strong> Sélectionnez l’une des disponibilités ci-dessous.',
+  '<strong>2. Rejoignez Impulsion.</strong> Renseignez vos informations puis réglez le parcours complet de 127 € sur Stripe.',
+  '<strong>3. Préparez votre rendez-vous.</strong> Vous recevez votre confirmation ainsi qu’un questionnaire à remplir avant notre rendez-vous.',
+  '<strong>4. Commencez votre accompagnement.</strong> Après le bilan visio, votre programme de 8 semaines est établi selon votre profil.'
+ ]:[
+  '<strong>1. Choisissez votre créneau.</strong> Sélectionnez l’une des disponibilités ci-dessous.',
+  '<strong>2. Réservez et réglez votre bilan.</strong> Renseignez vos informations puis procédez au paiement sécurisé.',
+  '<strong>3. Préparez votre rendez-vous.</strong> Vous recevez un e-mail avec toutes les informations ainsi qu’un petit questionnaire à remplir avant notre rendez-vous.',
+  '<strong>4. Rendez-vous en visio.</strong> Nous réalisons ensemble votre bilan pendant 45 minutes.'
+ ];
+ offer.querySelector('h3').textContent=isImpulsion?'Bilan préalable inclus dans Impulsion':'Votre bilan à distance';
+ offer.querySelector('.price').innerHTML=isImpulsion?'127 € <small>· parcours complet</small>':'45 € <small>· 45 minutes</small>';
+ [...offer.querySelectorAll('li')].forEach((item,index)=>item.innerHTML=copy[index]||'');
+ offer.querySelector('.direction').textContent=isImpulsion?'↓ Choisissez votre créneau de bilan inclus ci-dessous':'↓ Choisissez votre créneau ci-dessous';
 }
 function render(){
+ const impulsionMode=Boolean(selectedImpulsionBilan());
  Object.entries(grids).forEach(([category,grid])=>{
   grid.innerHTML='';
   const visible=slots.filter(s=>s.category===category&&slotLocation(s)===selectedLocations[category]);
@@ -183,7 +197,9 @@ function render(){
    const usable=!(paidEvent&&!s.payment_link_url);
    const bookingButton='<button class="book" '+(full||!usable?'disabled':'')+' data-id="'+s.id+'">'+(!usable?'Paiement bientôt disponible':label)+'</button>';
    const actions=s.category==='events'?(bookingButton+'<p class="event-help">'+(paidEvent?'Vos coordonnées, votre paiement et votre réservation sont reliés automatiquement.':'Cet événement est gratuit, aucun paiement n’est nécessaire.')+'</p>'):bookingButton;
-   el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+esc(s.title)+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+(s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'')+'</div>'+availability+actions;
+   const impulsionSlot=impulsionMode&&s.category==='bilans'&&slotLocation(s)==='visio';
+   const priceDetail=impulsionSlot?' · parcours complet : 127 €':s.price_cents?' · '+(s.price_cents/100).toLocaleString('fr-FR',{style:'currency',currency:'EUR'}):'';
+   el.innerHTML='<div class="eyebrow">'+(s.category==='cours'?'COURS':s.category==='bilans'?'BILAN':'ÉVÉNEMENT')+'</div><h3>'+esc(s.title)+'</h3><div class="meta">'+when(s)+'<br>'+s.duration_minutes+' min'+priceDetail+'</div>'+availability+actions;
    grid.append(el);
   });
  });
@@ -235,7 +251,7 @@ function openBooking(id){
  const location=slotLocation(s);
  const impulsionBilan=location==='visio'?selectedImpulsionBilan():null;
  if(s.category==='bilans'){
-  configurePayment({kind:'booking',category:'bilans',location,slotId:s.id,title:s.title,paymentUrl:impulsionBilan?.paymentUrl||bilanPaymentLinks[location],offerType:impulsionBilan?.offerType},impulsionBilan?'Payer et confirmer mon bilan · 30 €':'Payer et confirmer mon bilan');
+  configurePayment({kind:'booking',category:'bilans',location,slotId:s.id,title:s.title,paymentUrl:impulsionBilan?.paymentUrl||bilanPaymentLinks[location],offerType:impulsionBilan?.offerType},impulsionBilan?'Payer Impulsion et confirmer mon bilan · 127 €':'Payer et confirmer mon bilan');
  }else if(s.category==='events'&&Number(s.price_cents)>0){
   configurePayment({kind:'booking',category:'events',location,slotId:s.id,title:s.title,paymentUrl:s.payment_link_url},'Payer et confirmer ma place');
  }else if(s.category==='cours'&&selectedCourseOffer?.offerType==='trial'&&selectedCourseOffer.location===location){
@@ -276,7 +292,7 @@ document.querySelectorAll('[data-offer-category] .pay[href*="buy.stripe.com"]').
   if(config.offerType==='program_impulsion_bilan'){
    localStorage.setItem(STORAGE_BILAN_SELECTION,JSON.stringify({...config,savedAt:Date.now()}));
    showPanel('bilans','visio');
-   showReturnMessage('<strong>Bilan préalable FITÉRUS Impulsion · 30 €</strong>Choisissez votre créneau visio ci-dessous. Le paiement confirmera automatiquement votre réservation.');
+   showReturnMessage('<strong>FITÉRUS Impulsion · 127 € tout compris</strong>Choisissez votre créneau de bilan visio ci-dessous. Le paiement du parcours complet confirmera automatiquement votre réservation.');
    document.getElementById('bilanGrid').scrollIntoView({behavior:'smooth',block:'start'});
   }else if(config.category==='cours'&&config.offerType==='trial'){
    selectedCourseOffer={...config,savedAt:Date.now()};localStorage.setItem(STORAGE_SELECTION,JSON.stringify(selectedCourseOffer));
@@ -328,8 +344,11 @@ function hideModalFormForReturn(){
  consentLabel.classList.add('hidden');paymentStep.classList.add('hidden');modalActions.classList.add('hidden');
  notice.style.display='block';notice.style.background='#edf8f2';notice.style.color='#237a57';
 }
-function successMessage(result){
- if(result.isVisioBilan)return 'Votre réservation est confirmée.'+(result.questionnaireToken?'<a class="questionnaire-link" href="questionnaire-bilan.html?token='+encodeURIComponent(result.questionnaireToken)+'">Préparer mon bilan maintenant</a>':'');
+function successMessage(result,pending){
+ if(result.isVisioBilan){
+  const confirmation=pending?.offerType==='program_impulsion_bilan'?'Votre inscription à FITÉRUS Impulsion et votre créneau de bilan sont confirmés.':'Votre réservation est confirmée.';
+  return confirmation+(result.questionnaireToken?'<a class="questionnaire-link" href="questionnaire-bilan.html?token='+encodeURIComponent(result.questionnaireToken)+'">Préparer mon bilan maintenant</a>':'');
+ }
  if(result.chosen?.category==='bilans'&&!result.chosen.starts_at)return 'Votre demande de bilan est confirmée. Nous vous contacterons pour convenir du rendez-vous.';
  if(result.chosen?.category==='events')return 'Votre place est confirmée. Vous recevrez les informations pratiques par e-mail.';
  if(result.chosen?.category==='cours')return 'Votre cours est confirmé. Bienvenue dans la FITÉRUS Révolution.';
@@ -341,7 +360,7 @@ async function completePaidBooking(pending){
   localStorage.removeItem(STORAGE_PENDING);localStorage.removeItem('empowerfit_pending_bilan');
   if(pending.offerType==='trial')clearCourseSelection();
   if(pending.offerType==='program_impulsion_bilan')localStorage.removeItem(STORAGE_BILAN_SELECTION);
-  notice.style.background='#edf8f2';notice.style.color='#237a57';notice.innerHTML=successMessage(result);await loadSlots();return;
+  notice.style.background='#edf8f2';notice.style.color='#237a57';notice.innerHTML=successMessage(result,pending);await loadSlots();return;
  }
  if(/déjà réservé/i.test(result.error.message||'')){
   localStorage.removeItem(STORAGE_PENDING);localStorage.removeItem('empowerfit_pending_bilan');
