@@ -106,7 +106,7 @@ const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
 const STORAGE_PENDING='empowerfit_pending_purchase';
 const STORAGE_CONTACT='empowerfit_contact';
 const STORAGE_SELECTION='empowerfit_selected_offer';
-const STORAGE_PREPAID_BILAN='empowerfit_prepaid_bilan';
+const STORAGE_BILAN_SELECTION='empowerfit_bilan_selection';
 const booking=document.getElementById('booking');
 const bookingForm=document.getElementById('bookingForm');
 const modalTitle=document.getElementById('modalTitle');
@@ -159,6 +159,17 @@ function renderCourseJourney(){
 function clearCourseSelection(){
  selectedCourseOffer=null;localStorage.removeItem(STORAGE_SELECTION);renderCourseJourney();render();
 }
+function selectedImpulsionBilan(){
+ const selection=readStored(STORAGE_BILAN_SELECTION,2*60*60*1000);
+ return selection?.offerType==='program_impulsion_bilan'?selection:null;
+}
+function renderBilanOffer(){
+ const offer=document.querySelector('[data-offer-category="bilans"][data-offer-location="visio"]');
+ if(!offer)return;
+ const isImpulsion=Boolean(selectedImpulsionBilan());
+ offer.querySelector('h3').textContent=isImpulsion?'Votre bilan préalable Impulsion':'Votre bilan à distance';
+ offer.querySelector('.price').innerHTML=isImpulsion?'30 € <small>· 45 minutes</small>':'45 € <small>· 45 minutes</small>';
+}
 function render(){
  Object.entries(grids).forEach(([category,grid])=>{
   grid.innerHTML='';
@@ -185,7 +196,7 @@ function render(){
   if(empty)empty.classList.toggle('hidden',offers.some(card=>card.dataset.offerLocation===location));
  });
  document.querySelectorAll('[data-terms-location]').forEach(terms=>terms.classList.toggle('hidden',selectedLocations.cours!==terms.dataset.termsLocation));
- renderCourseJourney();
+ renderCourseJourney();renderBilanOffer();
 }
 function showPanel(category,location){
  document.querySelectorAll('.tab,.panel').forEach(x=>x.classList.remove('active'));
@@ -216,17 +227,15 @@ function resetModal(){
 function configurePayment(purchase,label){
  activePurchase=purchase;paymentStep.classList.remove('hidden');submitBooking.classList.add('hidden');
  paymentAction.href=purchase.paymentUrl||'#';paymentAction.textContent=label||'Continuer vers le paiement sécurisé';
- paymentHelp.textContent=purchase.offerType==='program_impulsion_bilan'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir votre créneau de bilan.':purchase.kind==='booking'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici et votre réservation sera confirmée.':purchase.category==='programmes'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour poursuivre votre entrée dans le programme.':'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir vos prochains cours.';
+ paymentHelp.textContent=purchase.kind==='booking'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici et votre réservation sera confirmée.':purchase.category==='programmes'?'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour poursuivre votre entrée dans le programme.':'Votre e-mail sera repris automatiquement sur Stripe. Après le paiement, vous reviendrez ici pour choisir vos prochains cours.';
 }
 function openBooking(id){
  const s=slots.find(x=>x.id===id);if(!s)return;
  resetModal();slotId.value=id;modalTitle.textContent=s.title;modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min';
  const location=slotLocation(s);
- const prepaidBilan=location==='visio'?readStored(STORAGE_PREPAID_BILAN,24*60*60*1000):null;
- if(s.category==='bilans'&&prepaidBilan){
-  modalMeta.textContent=when(s)+' · '+s.duration_minutes+' min · bilan déjà réglé';
- }else if(s.category==='bilans'){
-  configurePayment({kind:'booking',category:'bilans',location,slotId:s.id,title:s.title,paymentUrl:bilanPaymentLinks[location]},'Payer et confirmer mon bilan');
+ const impulsionBilan=location==='visio'?selectedImpulsionBilan():null;
+ if(s.category==='bilans'){
+  configurePayment({kind:'booking',category:'bilans',location,slotId:s.id,title:s.title,paymentUrl:impulsionBilan?.paymentUrl||bilanPaymentLinks[location],offerType:impulsionBilan?.offerType},impulsionBilan?'Payer et confirmer mon bilan · 30 €':'Payer et confirmer mon bilan');
  }else if(s.category==='events'&&Number(s.price_cents)>0){
   configurePayment({kind:'booking',category:'events',location,slotId:s.id,title:s.title,paymentUrl:s.payment_link_url},'Payer et confirmer ma place');
  }else if(s.category==='cours'&&selectedCourseOffer?.offerType==='trial'&&selectedCourseOffer.location===location){
@@ -235,9 +244,8 @@ function openBooking(id){
  booking.showModal();
 }
 function openOfferPurchase(config){
- const isImpulsionBilan=config.offerType==='program_impulsion_bilan';
- resetModal();modalTitle.textContent=config.title;modalMeta.textContent=isImpulsionBilan?'Après le paiement, vous choisirez votre créneau de bilan visio.':config.offerType==='card'?'Votre carte sera activée après le paiement.':config.category==='programmes'?'Votre accompagnement commencera après la validation du paiement.':'Votre formule sera activée après le paiement.';
- const label=isImpulsionBilan?'Payer mon bilan préalable · 30 €':config.offerType==='card'?'Acheter ma carte sur Stripe':config.offerType==='program_revolution_full'?'Payer 297 € sur Stripe':config.offerType==='program_revolution_3x'?'Commencer mes 3 mensualités de 99 €':config.offerType==='program_impulsion'?'Payer 97 € sur Stripe':'Continuer vers le paiement sécurisé';
+ resetModal();modalTitle.textContent=config.title;modalMeta.textContent=config.offerType==='card'?'Votre carte sera activée après le paiement.':config.category==='programmes'?'Votre accompagnement commencera après la validation du paiement.':'Votre formule sera activée après le paiement.';
+ const label=config.offerType==='card'?'Acheter ma carte sur Stripe':config.offerType==='program_revolution_full'?'Payer 297 € sur Stripe':config.offerType==='program_revolution_3x'?'Commencer mes 3 mensualités de 99 €':config.offerType==='program_impulsion'?'Payer 97 € sur Stripe':'Continuer vers le paiement sécurisé';
  configurePayment(config,label);
  booking.showModal();
 }
@@ -265,13 +273,21 @@ document.querySelectorAll('[data-offer-category] .pay[href*="buy.stripe.com"]').
  const config=offerConfig(link);if(!config)return;link.target='_self';
  link.addEventListener('click',e=>{
   e.preventDefault();
-  if(config.category==='cours'&&config.offerType==='trial'){
+  if(config.offerType==='program_impulsion_bilan'){
+   localStorage.setItem(STORAGE_BILAN_SELECTION,JSON.stringify({...config,savedAt:Date.now()}));
+   showPanel('bilans','visio');
+   showReturnMessage('<strong>Bilan préalable FITÉRUS Impulsion · 30 €</strong>Choisissez votre créneau visio ci-dessous. Le paiement confirmera automatiquement votre réservation.');
+   document.getElementById('bilanGrid').scrollIntoView({behavior:'smooth',block:'start'});
+  }else if(config.category==='cours'&&config.offerType==='trial'){
    selectedCourseOffer={...config,savedAt:Date.now()};localStorage.setItem(STORAGE_SELECTION,JSON.stringify(selectedCourseOffer));
    showPanel('cours',config.location);document.getElementById('courseGrid').scrollIntoView({behavior:'smooth',block:'start'});
   }else{if(selectedCourseOffer)clearCourseSelection();openOfferPurchase({...config,savedAt:Date.now()})}
  });
 });
-document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>showPanel(b.dataset.tab,selectedLocations[b.dataset.tab]));
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{
+ if(b.dataset.tab!=='bilans')localStorage.removeItem(STORAGE_BILAN_SELECTION);
+ showPanel(b.dataset.tab,selectedLocations[b.dataset.tab]);
+});
 document.querySelectorAll('.location-tab').forEach(b=>b.onclick=()=>{
  const group=b.closest('[data-group]').dataset.group;
  if(group==='cours'&&selectedCourseOffer&&selectedCourseOffer.location!==b.dataset.location)clearCourseSelection();
@@ -324,6 +340,7 @@ async function completePaidBooking(pending){
  if(!result.error){
   localStorage.removeItem(STORAGE_PENDING);localStorage.removeItem('empowerfit_pending_bilan');
   if(pending.offerType==='trial')clearCourseSelection();
+  if(pending.offerType==='program_impulsion_bilan')localStorage.removeItem(STORAGE_BILAN_SELECTION);
   notice.style.background='#edf8f2';notice.style.color='#237a57';notice.innerHTML=successMessage(result);await loadSlots();return;
  }
  if(/déjà réservé/i.test(result.error.message||'')){
@@ -347,12 +364,6 @@ async function handleStripeReturn(){
  saveContactFromPending(pending);
  if(pending.kind==='offer'){
   localStorage.removeItem(STORAGE_PENDING);if(selectedCourseOffer)clearCourseSelection();
-  if(pending.offerType==='program_impulsion_bilan'){
-   localStorage.setItem(STORAGE_PREPAID_BILAN,JSON.stringify({first:pending.first,last:pending.last,email:pending.email,phone:pending.phone,savedAt:Date.now()}));
-   showPanel('bilans','visio');
-   showReturnMessage('<strong>Votre bilan préalable est réglé.</strong>Choisissez maintenant votre créneau de bilan visio ci-dessous.');
-   document.getElementById('bilanGrid').scrollIntoView({behavior:'smooth',block:'start'});return;
-  }
   if(pending.category==='programmes'){
    showPanel('programmes','online');
    showReturnMessage('<strong>Bienvenue dans votre parcours FITÉRUS.</strong>Votre inscription a bien été transmise. La prochaine étape sera l’activation de votre bilan, de votre espace d’entraînement et de votre accompagnement.');return;
@@ -375,7 +386,7 @@ bookingForm.onsubmit=async e=>{
  notice.textContent=result.error?(result.error.message||'Réservation impossible.'):(result.chosen?.starts_at?'Votre réservation est confirmée.':'Votre demande de bilan est enregistrée.');
  notice.style.display='block';notice.style.background=result.error?'#f9e9eb':'#edf8f2';notice.style.color=result.error?'#a22':'#237a57';
  submit.disabled=false;submit.textContent='Vérifier et réserver';
- if(!result.error){if(result.chosen?.category==='bilans'&&slotLocation(result.chosen)==='visio')localStorage.removeItem(STORAGE_PREPAID_BILAN);await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
+ if(!result.error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
 (async()=>{await loadSlots();await handleStripeReturn()})();
 setInterval(loadSlots,20000);
