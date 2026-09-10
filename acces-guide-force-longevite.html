@@ -1,0 +1,24 @@
+<!doctype html>
+<html lang="fr">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="robots" content="noindex,nofollow"><meta name="theme-color" content="#5F123F"><title>Votre guide EMPOWERFIT</title>
+<link rel="icon" href="favicon-empowerfit.svg" type="image/svg+xml">
+<style>
+:root{--p:#5F123F;--b:#F7F1E5;--i:#1D1017;--g:#C7A667;--m:#756B70}*{box-sizing:border-box}body{margin:0;font-family:Inter,system-ui,-apple-system,sans-serif;background:var(--b);color:var(--i)}main{max-width:850px;margin:auto;padding:34px 20px 70px;text-align:center}.logo{width:105px;height:105px;object-fit:contain;border-radius:50%;background:var(--p);padding:8px}h1,h2{font-family:Georgia,serif;color:var(--p)}h1{font-size:clamp(2.3rem,7vw,4.5rem);line-height:1;margin:25px 0 15px}p{line-height:1.6;color:#5f5057}.status{max-width:640px;margin:20px auto;padding:12px 14px;background:#fff;border-radius:14px;color:var(--m)}.actions{display:grid;grid-template-columns:1fr 1fr;gap:12px;max-width:650px;margin:28px auto}.btn,button{border:0;border-radius:999px;padding:15px 18px;font-weight:900;font-size:.95rem;cursor:pointer;text-decoration:none}button{background:var(--p);color:white}button.alt{background:white;color:var(--p);border:1px solid #d7c8cf}.tip{max-width:650px;margin:25px auto;background:white;border-radius:18px;padding:18px;text-align:left;font-size:.85rem}.next{max-width:650px;margin:28px auto;background:var(--p);color:var(--b);border-radius:22px;padding:25px;text-align:left}.next h2{color:var(--b);margin:0 0 8px}.next p{color:#eadde3;margin:0}.next .btn{display:inline-block;margin-top:15px;background:var(--b);color:var(--p)}@media(max-width:650px){.actions{grid-template-columns:1fr}}
+</style></head>
+<body><main>
+<img class="logo" src="logo-inverse-empowerfit.svg" alt="Logo EMPOWERFIT">
+<h1>Votre guide est prêt.</h1>
+<p>La force comme capital santé · 8 pages · Auto-bilan en 8 questions · Semaine Fondation.</p>
+<div class="status" id="status">Préparation du PDF…</div>
+<div class="actions"><button id="openPdf" disabled>Ouvrir le guide</button><button class="alt" id="downloadPdf" disabled>Enregistrer le PDF</button></div>
+<div class="tip"><strong>Sur iPhone :</strong> si « Enregistrer » ouvre le PDF au lieu de l’enregistrer directement, touchez l’icône Partager de Safari puis « Enregistrer dans Fichiers ». Le guide est servi depuis votre site EMPOWERFIT et ne dépend pas du téléchargement ChatGPT.</div>
+<div class="next"><h2>Vous voulez aller plus loin ?</h2><p>Le bilan visio EMPOWERFIT dure 45 minutes et coûte 45 €. Il permet de clarifier votre point de départ, vos objectifs et vos priorités avant de choisir un accompagnement.</p><a class="btn" href="reservation.html#bilans">Découvrir le bilan visio</a></div>
+</main>
+<script>
+const PARTS=6;let pdfBlob=null,pdfUrl=null;const status=document.getElementById('status'),openBtn=document.getElementById('openPdf'),downloadBtn=document.getElementById('downloadPdf');
+async function loadPdf(){try{const texts=await Promise.all(Array.from({length:PARTS},(_,i)=>fetch(`assets/guide-pdf/part-${i+1}.txt`,{cache:'force-cache'}).then(r=>{if(!r.ok)throw new Error(`part-${i+1}`);return r.text()})));const b64=texts.join('').replace(/\s/g,'');const bin=atob(b64),arr=new Uint8Array(bin.length);for(let i=0;i<bin.length;i++)arr[i]=bin.charCodeAt(i);pdfBlob=new Blob([arr],{type:'application/pdf'});pdfUrl=URL.createObjectURL(pdfBlob);status.textContent='Guide prêt · '+(pdfBlob.size/1024).toFixed(0)+' Ko';openBtn.disabled=false;downloadBtn.disabled=false;}catch(e){status.textContent='Impossible de préparer le guide pour le moment. Rechargez cette page.';console.error(e)}}
+openBtn.addEventListener('click',()=>{if(!pdfUrl)return;window.open(pdfUrl,'_blank','noopener')});
+downloadBtn.addEventListener('click',()=>{if(!pdfUrl)return;const a=document.createElement('a');a.href=pdfUrl;a.download='EMPOWERFIT-La-force-comme-capital-sante.pdf';document.body.appendChild(a);a.click();a.remove()});
+loadPdf();window.addEventListener('beforeunload',()=>{if(pdfUrl)URL.revokeObjectURL(pdfUrl)});
+</script></body></html>
