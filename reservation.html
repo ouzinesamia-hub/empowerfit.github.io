@@ -396,6 +396,10 @@ async function handleStripeReturn(){
  hideModalFormForReturn();notice.textContent='Validation du paiement en cours…';booking.showModal();
  await completePaidBooking(pending);
 }
+function showPanelFromHash(){
+ const category=location.hash.slice(1);
+ if(['events','bilans','programmes','cours'].includes(category))showPanel(category,selectedLocations[category]);
+}
 function saveContactFromPending(pending){
  if(!pending?.email)return;
  localStorage.setItem(STORAGE_CONTACT,JSON.stringify({first:pending.first||'',last:pending.last||'',email:pending.email,phone:pending.phone||'',savedAt:Date.now()}));
@@ -408,7 +412,7 @@ bookingForm.onsubmit=async e=>{
  submit.disabled=false;submit.textContent='Vérifier et réserver';
  if(!result.error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
-(async()=>{await loadSlots();await handleStripeReturn()})();
+(async()=>{await loadSlots();showPanelFromHash();await handleStripeReturn()})();
 setInterval(loadSlots,20000);
 </script>
 </body></html>
