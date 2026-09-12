@@ -103,19 +103,20 @@
       {n:12,stage:"Votre quotidien",q:"Comment évaluez-vous la qualité de votre sommeil ?",type:"scale",low:"1 · Très mauvaise",high:"10 · Excellente"},
       {n:13,stage:"Votre quotidien",q:"Comment évaluez-vous votre niveau d’énergie ?",type:"scale",low:"1 · Très faible",high:"10 · Très élevé"},
       {n:14,stage:"Votre quotidien",q:"Comment évaluez-vous votre niveau de stress ?",type:"scale",low:"1 · Très faible",high:"10 · Très élevé"},
-      {n:15,stage:"Votre quotidien",q:"Vous reconnaissez-vous dans l’une de ces situations ?",note:"Cette information sert uniquement à mieux comprendre votre énergie, votre récupération et vos besoins actuels.",options:["Cycles menstruels réguliers","Cycles irréguliers","Périménopause","Ménopause","Grossesse","Post-partum","Aucune de ces situations","Je préfère ne pas répondre",A]},
+      {n:15,stage:"Votre quotidien",q:"Quelle(s) situation(s) ou étape(s) de vie vous correspondent actuellement ?",note:"Plusieurs réponses peuvent s’appliquer en même temps. Cette information sert uniquement à mieux comprendre votre énergie, votre récupération et vos besoins actuels.",type:"multi",options:["Cycles menstruels réguliers","Cycles irréguliers","Périménopause","Ménopause","Grossesse","Post-partum","Aucune de ces situations","Je préfère ne pas répondre",A],exclusive:["Aucune de ces situations","Je préfère ne pas répondre"]},
       {n:16,stage:"Votre corps aujourd’hui",q:"Ressentez-vous actuellement une douleur ou une gêne physique ?",type:"pain"},
       {n:17,stage:"Votre corps aujourd’hui",q:"Avez-vous subi une blessure, une opération ou une hospitalisation au cours des douze derniers mois ?",options:["Non","Oui, mais je n’ai plus de restriction","Oui, avec certaines précautions","Oui, et je suis toujours suivie",A]},
       {n:18,stage:"Votre corps aujourd’hui",q:"Avez-vous reçu une consigne médicale concernant l’activité physique ?",options:["Non","Oui, je dois éviter certains mouvements","Oui, je dois limiter l’intensité","Oui, je dois reprendre progressivement","Je ne sais pas",A]},
       {n:19,stage:"Votre corps aujourd’hui",q:"Avez-vous récemment ressenti l’un de ces symptômes ?",type:"multi",options:["Une douleur ou une oppression dans la poitrine","Un essoufflement inhabituel","Des vertiges importants","Une perte de connaissance","Une perte d’équilibre inexpliquée","Aucun de ces symptômes",A],exclusive:["Aucun de ces symptômes"]},
-      {n:20,stage:"Votre corps aujourd’hui",q:"Prenez-vous un traitement susceptible d’influencer votre effort, votre équilibre ou votre récupération ?",options:["Non","Oui","Je ne sais pas","Je préfère vous en parler pendant le bilan"]},
-      {n:21,stage:"Votre corps aujourd’hui",q:"Concernant la grossesse ou le post-partum :",options:["Je suis enceinte","J’ai accouché il y a moins de 3 mois","Il y a 3 à 6 mois","Il y a 6 à 12 mois","Il y a plus de 12 mois","Je préfère vous en parler pendant le bilan"],when:()=>["Grossesse","Post-partum"].includes(singleValue(state.answers.q15))},
+      {n:20,stage:"Votre corps aujourd’hui",q:"Prenez-vous actuellement un traitement susceptible d’influencer votre effort, votre équilibre, votre énergie ou votre récupération ?",note:"Par exemple : pilule contraceptive, traitement hormonal, traitement médicamenteux, etc.",type:"treatment",options:["Non","Oui","Je ne sais pas","Je préfère vous en parler pendant le bilan"]},
+      {n:21,stage:"Votre corps aujourd’hui",q:"Concernant la grossesse ou le post-partum :",options:["Je suis enceinte","J’ai accouché il y a moins de 3 mois","Il y a 3 à 6 mois","Il y a 6 à 12 mois","Il y a plus de 12 mois","Je préfère vous en parler pendant le bilan"],when:()=>multiValues(state.answers.q15).some(x=>["Grossesse","Post-partum"].includes(x))},
       {n:22,stage:"Votre corps aujourd’hui",q:"Certains mouvements vous inquiètent-ils ou vous mettent-ils en difficulté ?",type:"multi",options:["M’accroupir","Me pencher vers l’avant","Me relever du sol","Tenir en équilibre sur une jambe","Lever les bras au-dessus de la tête","Pousser ou porter une charge","Marcher rapidement ou monter les escaliers","Aucun mouvement particulier",A],exclusive:["Aucun mouvement particulier"]},
       {n:23,stage:"Préparons votre bilan",q:"Le jour du bilan, pourrez-vous prévoir :",note:"Sélectionnez tout ce que vous pourrez préparer.",type:"multi",options:["Une chaise stable","Un peu d’espace autour de moi","Une tenue confortable","Une caméra permettant de voir l’ensemble de mon corps","Un mur ou un support stable à proximité"]},
       {n:24,stage:"Préparons votre bilan",q:"Acceptez-vous de réaliser quelques mouvements simples et adaptés à votre situation ?",options:["Oui","Oui, mais je souhaite rester prudente","Je préfère en parler avant de commencer","Je souhaite réaliser uniquement la partie entretien"]},
       {n:25,stage:"Préparons votre bilan",q:"Y a-t-il un autre sujet que vous aimeriez aborder pendant le bilan ?",type:"multi",options:["Mon entraînement","Ma composition corporelle","Mon énergie","Mon sommeil","Mon stress","Ma confiance en mon corps","Mon organisation","La périménopause ou la ménopause","La reprise après une grossesse","Non, les sujets principaux sont déjà renseignés",A],exclusive:["Non, les sujets principaux sont déjà renseignés"]}
     ];
     function singleValue(value){return typeof value==="string"?value:(value&&value.choice)||""}
+    function multiValues(value){return value&&Array.isArray(value.choices)?value.choices:[]}
     function visibleSteps(){return steps.filter(s=>!s.when||s.when())}
     function esc(value){return String(value??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;","\"":"&quot;","'":"&#039;"}[c]))}
     function formattedDate(value){return value?new Intl.DateTimeFormat("fr-FR",{dateStyle:"full",timeStyle:"short",timeZone:"Europe/Paris"}).format(new Date(value)):""}
@@ -139,11 +140,12 @@
         else if((step.exclusive||[]).includes(label)) choices=[label];
         else{choices=choices.filter(x=>!(step.exclusive||[]).includes(x));choices.push(label)}
         state.answers[id]={choices,other:choices.includes(A)?current.other||"":""};
+        if(step.n===15&&!choices.some(x=>["Grossesse","Post-partum"].includes(x)))delete state.answers.q21;
       }else{
         state.answers[id]=label===A?{choice:A,other:""}:label;
-        if(step.n===15&&!["Grossesse","Post-partum"].includes(label))delete state.answers.q21;
+        if(step.n===20&&label!=="Oui")delete state.answers.q20_detail;
       }
-      renderQuestion();
+      renderQuestion(true);
     }
     function otherField(step,value){
       const wrap=document.createElement("div");wrap.className="other-wrap";
@@ -151,6 +153,19 @@
       const input=document.createElement("input");input.type="text";input.maxLength=300;input.value=value||"";input.placeholder="Votre précision";input.autocomplete="off";
       input.oninput=()=>{const id="q"+step.n;state.answers[id]={...state.answers[id],other:input.value}};
       wrap.append(label,input);return wrap;
+    }
+    function treatmentBlock(step){
+      const value=singleValue(state.answers.q20);
+      const frag=document.createDocumentFragment();
+      frag.append(optionButtons(step,step.options,x=>value===x));
+      if(value==="Oui"){
+        const wrap=document.createElement("div");wrap.className="other-wrap subquestion";
+        const label=document.createElement("label");label.textContent="Décrivez brièvement votre traitement";
+        const input=document.createElement("input");input.type="text";input.maxLength=300;input.value=state.answers.q20_detail||"";input.placeholder="Nom ou type de traitement, si vous le connaissez";input.autocomplete="off";
+        input.oninput=()=>{state.answers.q20_detail=input.value};
+        wrap.append(label,input);frag.appendChild(wrap);
+      }
+      return frag;
     }
     function scaleButtons(step,current,onPick){
       const block=document.createElement("div");const grid=document.createElement("div");grid.className="scale";
@@ -161,16 +176,16 @@
       const value=state.answers.q16||{pain:"",location:"",other:"",intensity:null};
       const frag=document.createDocumentFragment();
       frag.append(optionButtons(step,["Non","Oui"],x=>value.pain===x));
-      frag.querySelectorAll(".option").forEach(b=>b.onclick=()=>{state.answers.q16={pain:b.textContent,location:"",other:"",intensity:null};renderQuestion()});
+      frag.querySelectorAll(".option").forEach(b=>b.onclick=()=>{state.answers.q16={pain:b.textContent,location:"",other:"",intensity:null};renderQuestion(true)});
       if(value.pain==="Oui"){
         const loc=document.createElement("div");loc.className="subquestion";loc.innerHTML="<h3>Où se situe-t-elle ?</h3>";
         const locations=["Dos","Nuque ou cervicales","Épaule","Coude ou poignet","Hanche","Genou","Cheville ou pied","Plusieurs zones",A];
         const buttons=optionButtons(step,locations,x=>value.location===x);
-        buttons.querySelectorAll(".option").forEach(b=>b.onclick=()=>{state.answers.q16={...value,location:b.textContent,other:b.textContent===A?"":value.other};renderQuestion()});
+        buttons.querySelectorAll(".option").forEach(b=>b.onclick=()=>{state.answers.q16={...value,location:b.textContent,other:b.textContent===A?"":value.other};renderQuestion(true)});
         loc.appendChild(buttons);
         if(value.location===A)loc.appendChild(otherField({n:16},value.other));
         const intensity=document.createElement("div");intensity.className="subquestion";intensity.innerHTML="<h3>Quelle est son intensité aujourd’hui ?</h3>";
-        intensity.appendChild(scaleButtons({low:"1 · Très légère",high:"10 · Très forte"},value.intensity,n=>{state.answers.q16={...value,intensity:n};renderQuestion()}));
+        intensity.appendChild(scaleButtons({low:"1 · Très légère",high:"10 · Très forte"},value.intensity,n=>{state.answers.q16={...value,intensity:n};renderQuestion(true)}));
         frag.append(loc,intensity);
       }
       return frag;
@@ -180,15 +195,18 @@
       if(step.type==="pain")return value&&value.pain&&((value.pain==="Non")||(value.location&&value.intensity&&(!value.location.includes("Autre")||String(value.other||"").trim())));
       if(step.type==="multi")return value&&value.choices&&value.choices.length>0&&(!value.choices.includes(A)||String(value.other||"").trim().length>0);
       if(step.type==="scale")return Number.isInteger(value)&&value>=1&&value<=10;
+      if(step.type==="treatment")return Boolean(singleValue(value))&&(singleValue(value)!=="Oui"||String(state.answers.q20_detail||"").trim().length>0);
       return Boolean(singleValue(value))&&(singleValue(value)!==A||String(value.other||"").trim().length>0);
     }
-    function renderQuestion(){
+    function renderQuestion(preserveScroll=false){
+      const previousY=window.scrollY;
       const list=visibleSteps();if(state.index>=list.length)state.index=list.length-1;
       const step=list[state.index],id="q"+step.n,value=state.answers[id];
       app.innerHTML='<div class="progress-wrap"><div class="progress-meta"><span>ÉTAPE '+(step.n<=5?"1":step.n<=10?"2":step.n<=15?"3":step.n<=22?"4":"5")+' · '+esc(step.stage)+'</span><span>'+step.n+' / 25</span></div><div class="track"><div class="bar" style="width:'+(step.n/25*100)+'%"></div></div></div><div class="card-body"><div class="question-number">QUESTION '+step.n+'</div><h2>'+esc(step.q)+'</h2>'+(step.note?'<p class="question-note">'+esc(step.note)+'</p>':'')+'<div id="answer"></div><div class="error" id="answerError"></div><div class="actions"><button class="btn secondary" id="back">RETOUR</button><button class="btn" id="next">'+(step.n===25?"VALIDER MES RÉPONSES":"CONTINUER")+'</button></div></div>';
       const answer=document.getElementById("answer");
       if(step.type==="pain")answer.appendChild(painBlock(step));
-      else if(step.type==="scale")answer.appendChild(scaleButtons(step,value,n=>{state.answers[id]=n;renderQuestion()}));
+      else if(step.type==="treatment")answer.appendChild(treatmentBlock(step));
+      else if(step.type==="scale")answer.appendChild(scaleButtons(step,value,n=>{state.answers[id]=n;renderQuestion(true)}));
       else if(step.type==="multi"){
         const current=value&&value.choices?value:{choices:[],other:""};
         answer.appendChild(optionButtons(step,step.options,x=>current.choices.includes(x),true));
@@ -198,8 +216,8 @@
         if(singleValue(value)===A)answer.appendChild(otherField(step,value.other));
       }
       document.getElementById("back").onclick=()=>{if(state.index===0)welcome();else{state.index--;renderQuestion()}};
-      document.getElementById("next").onclick=()=>{if(!currentValid(step)){document.getElementById("answerError").textContent="Sélectionnez votre réponse pour continuer.";return}if(state.index===visibleSteps().length-1)renderConsents();else{state.index++;renderQuestion()}};
-      scrollTo({top:0,behavior:"smooth"});
+      document.getElementById("next").onclick=()=>{if(!currentValid(step)){document.getElementById("answerError").textContent=step.type==="treatment"&&singleValue(value)==="Oui"?"Décrivez brièvement votre traitement pour continuer.":"Sélectionnez votre réponse pour continuer.";return}if(state.index===visibleSteps().length-1)renderConsents();else{state.index++;renderQuestion()}};
+      requestAnimationFrame(()=>window.scrollTo({top:preserveScroll?previousY:0,behavior:preserveScroll?"auto":"smooth"}));
     }
     function renderConsents(){
       app.innerHTML='<div class="progress-wrap"><div class="progress-meta"><span>DERNIÈRE ÉTAPE · Validation</span><span>25 / 25</span></div><div class="track"><div class="bar" style="width:100%"></div></div></div><div class="card-body"><div class="eyebrow">Avant d’envoyer</div><h2>Confirmez vos réponses.</h2><p class="question-note">Ces informations permettent de préparer un bilan pertinent et sécurisant. Elles ne remplacent pas un avis médical.</p><div class="consents"><label class="consent"><input id="accuracy" type="checkbox"><span>Je confirme que mes réponses sont exactes à ma connaissance et je signalerai tout changement avant le rendez-vous.</span></label><label class="consent"><input id="use" type="checkbox"><span>J’accepte que les informations communiquées soient utilisées par EMPOWERFIT uniquement pour préparer, adapter et assurer le suivi de mon bilan.</span></label><label class="consent"><input id="scope" type="checkbox"><span>J’ai compris que ce bilan est un accompagnement sportif et qu’il ne remplace pas une consultation ou un diagnostic médical.</span></label><label class="consent optional"><input id="marketing" type="checkbox"><span>Facultatif — Je souhaite recevoir les conseils, actualités et offres EMPOWERFIT.</span></label></div><div class="error" id="submitError"></div><div class="actions"><button class="btn secondary" id="back">RETOUR</button><button class="btn" id="submit">VALIDER ET PRÉPARER MON BILAN</button></div></div>';
