@@ -67,6 +67,7 @@
     .success-mark{width:68px;height:68px;display:grid;place-items:center;border-radius:50%;background:var(--plum);color:#fff;font-size:2rem;margin-bottom:24px;box-shadow:0 10px 30px rgba(95,18,63,.23)}
     .revolution{margin-top:26px;padding:22px;border-radius:17px;background:linear-gradient(135deg,var(--plum-dark),var(--plum));color:#fff}
     .revolution strong{color:#f2dcae}
+    .revolution-link{display:inline-block;margin-top:16px;padding:11px 14px;border-radius:10px;background:var(--gold);color:#1d1017;text-decoration:none;font-weight:850}
     .loading{text-align:center;padding:62px 30px;color:var(--muted)}
     .spinner{width:34px;height:34px;margin:0 auto 18px;border:3px solid #eadce4;border-top-color:var(--plum);border-radius:50%;animation:spin .8s linear infinite}
     @keyframes spin{to{transform:rotate(360deg)}}
@@ -88,6 +89,7 @@
     const token=new URLSearchParams(location.search).get("token")||"";
     const state={context:null,answers:{},index:0};
     const A="Autre, précisez";
+    const REVOLUTION_VIDEO_URL="";
     const steps=[
       {n:1,stage:"Ce que vous voulez changer",q:"Quel est votre objectif prioritaire ?",options:["Retrouver de la force","Reprendre une activité physique","Améliorer ma composition corporelle","Retrouver de l’énergie","Améliorer ma mobilité","Me sentir plus solide au quotidien","Reprendre confiance en mon corps","Mieux vivre la périménopause ou la ménopause","Reprendre après une grossesse",A]},
       {n:2,stage:"Ce que vous voulez changer",q:"Dans trois mois, quel changement aimeriez-vous constater en priorité ?",options:["Me sentir plus forte","Avoir davantage d’énergie","Être devenue régulière","Me sentir plus tonique","Être plus à l’aise dans mon corps","Réaliser certains mouvements plus facilement","Avoir moins de limitations au quotidien","Avoir retrouvé confiance en mes capacités",A]},
@@ -103,7 +105,7 @@
       {n:12,stage:"Votre quotidien",q:"Comment évaluez-vous la qualité de votre sommeil ?",type:"scale",low:"1 · Très mauvaise",high:"10 · Excellente"},
       {n:13,stage:"Votre quotidien",q:"Comment évaluez-vous votre niveau d’énergie ?",type:"scale",low:"1 · Très faible",high:"10 · Très élevé"},
       {n:14,stage:"Votre quotidien",q:"Comment évaluez-vous votre niveau de stress ?",type:"scale",low:"1 · Très faible",high:"10 · Très élevé"},
-      {n:15,stage:"Votre quotidien",q:"Quelle(s) situation(s) ou étape(s) de vie vous correspondent actuellement ?",note:"Plusieurs réponses peuvent s’appliquer en même temps. Cette information sert uniquement à mieux comprendre votre énergie, votre récupération et vos besoins actuels.",type:"multi",options:["Cycles menstruels réguliers","Cycles irréguliers","Périménopause","Ménopause","Grossesse","Post-partum","Aucune de ces situations","Je préfère ne pas répondre",A],exclusive:["Aucune de ces situations","Je préfère ne pas répondre"]},
+      {n:15,stage:"Votre quotidien",q:"Quelle(s) situation(s) ou étape(s) de vie vous correspondent actuellement ?",note:"Plusieurs réponses peuvent s’appliquer en même temps. Cette information sert uniquement à mieux comprendre votre énergie, votre récupération et vos besoins actuels.",type:"multi",options:["Cycles menstruels réguliers","Cycles irréguliers","Périménopause","Ménopause","Grossesse","Post-partum","Situation gynécologique ou hormonale particulière (endométriose, SOPK…)","Je préfère ne pas répondre",A],exclusive:["Je préfère ne pas répondre"]},
       {n:16,stage:"Votre corps aujourd’hui",q:"Ressentez-vous actuellement une douleur ou une gêne physique ?",type:"pain"},
       {n:17,stage:"Votre corps aujourd’hui",q:"Avez-vous subi une blessure, une opération ou une hospitalisation au cours des douze derniers mois ?",options:["Non","Oui, mais je n’ai plus de restriction","Oui, avec certaines précautions","Oui, et je suis toujours suivie",A]},
       {n:18,stage:"Votre corps aujourd’hui",q:"Avez-vous reçu une consigne médicale concernant l’activité physique ?",options:["Non","Oui, je dois éviter certains mouvements","Oui, je dois limiter l’intensité","Oui, je dois reprendre progressivement","Je ne sais pas",A]},
@@ -112,7 +114,7 @@
       {n:21,stage:"Votre corps aujourd’hui",q:"Concernant la grossesse ou le post-partum :",options:["Je suis enceinte","J’ai accouché il y a moins de 3 mois","Il y a 3 à 6 mois","Il y a 6 à 12 mois","Il y a plus de 12 mois","Je préfère vous en parler pendant le bilan"],when:()=>multiValues(state.answers.q15).some(x=>["Grossesse","Post-partum"].includes(x))},
       {n:22,stage:"Votre corps aujourd’hui",q:"Certains mouvements vous inquiètent-ils ou vous mettent-ils en difficulté ?",type:"multi",options:["M’accroupir","Me pencher vers l’avant","Me relever du sol","Tenir en équilibre sur une jambe","Lever les bras au-dessus de la tête","Pousser ou porter une charge","Marcher rapidement ou monter les escaliers","Aucun mouvement particulier",A],exclusive:["Aucun mouvement particulier"]},
       {n:23,stage:"Préparons votre bilan",q:"Le jour du bilan, pourrez-vous prévoir :",note:"Sélectionnez tout ce que vous pourrez préparer.",type:"multi",options:["Une chaise stable","Un peu d’espace autour de moi","Une tenue confortable","Une caméra permettant de voir l’ensemble de mon corps","Un mur ou un support stable à proximité"]},
-      {n:24,stage:"Préparons votre bilan",q:"Acceptez-vous de réaliser quelques mouvements simples et adaptés à votre situation ?",options:["Oui","Oui, mais je souhaite rester prudente","Je préfère en parler avant de commencer","Je souhaite réaliser uniquement la partie entretien"]},
+      {n:24,stage:"Préparons votre bilan",q:"Lors du bilan, acceptez-vous de réaliser quelques mouvements simples et adaptés à votre situation ?",options:["Oui","Oui, mais je souhaite rester prudente","Je préfère en parler avant de commencer","Je souhaite réaliser uniquement la partie entretien"]},
       {n:25,stage:"Préparons votre bilan",q:"Y a-t-il un autre sujet que vous aimeriez aborder pendant le bilan ?",type:"multi",options:["Mon entraînement","Ma composition corporelle","Mon énergie","Mon sommeil","Mon stress","Ma confiance en mon corps","Mon organisation","La périménopause ou la ménopause","La reprise après une grossesse","Non, les sujets principaux sont déjà renseignés",A],exclusive:["Non, les sujets principaux sont déjà renseignés"]}
     ];
     function singleValue(value){return typeof value==="string"?value:(value&&value.choice)||""}
@@ -161,7 +163,7 @@
       if(value==="Oui"){
         const wrap=document.createElement("div");wrap.className="other-wrap subquestion";
         const label=document.createElement("label");label.textContent="Décrivez brièvement votre traitement";
-        const input=document.createElement("input");input.type="text";input.maxLength=300;input.value=state.answers.q20_detail||"";input.placeholder="Nom ou type de traitement, si vous le connaissez";input.autocomplete="off";
+        const input=document.createElement("input");input.type="text";input.maxLength=300;input.value=state.answers.q20_detail||"";input.placeholder="Nom ou type de traitement";input.autocomplete="off";
         input.oninput=()=>{state.answers.q20_detail=input.value};
         wrap.append(label,input);frag.appendChild(wrap);
       }
@@ -220,7 +222,7 @@
       requestAnimationFrame(()=>window.scrollTo({top:preserveScroll?previousY:0,behavior:preserveScroll?"auto":"smooth"}));
     }
     function renderConsents(){
-      app.innerHTML='<div class="progress-wrap"><div class="progress-meta"><span>DERNIÈRE ÉTAPE · Validation</span><span>25 / 25</span></div><div class="track"><div class="bar" style="width:100%"></div></div></div><div class="card-body"><div class="eyebrow">Avant d’envoyer</div><h2>Confirmez vos réponses.</h2><p class="question-note">Ces informations permettent de préparer un bilan pertinent et sécurisant. Elles ne remplacent pas un avis médical.</p><div class="consents"><label class="consent"><input id="accuracy" type="checkbox"><span>Je confirme que mes réponses sont exactes à ma connaissance et je signalerai tout changement avant le rendez-vous.</span></label><label class="consent"><input id="use" type="checkbox"><span>J’accepte que les informations communiquées soient utilisées par EMPOWERFIT uniquement pour préparer, adapter et assurer le suivi de mon bilan.</span></label><label class="consent"><input id="scope" type="checkbox"><span>J’ai compris que ce bilan est un accompagnement sportif et qu’il ne remplace pas une consultation ou un diagnostic médical.</span></label><label class="consent optional"><input id="marketing" type="checkbox"><span>Facultatif — Je souhaite recevoir les conseils, actualités et offres EMPOWERFIT.</span></label></div><div class="error" id="submitError"></div><div class="actions"><button class="btn secondary" id="back">RETOUR</button><button class="btn" id="submit">VALIDER ET PRÉPARER MON BILAN</button></div></div>';
+      app.innerHTML='<div class="progress-wrap"><div class="progress-meta"><span>DERNIÈRE ÉTAPE · Validation</span><span>25 / 25</span></div><div class="track"><div class="bar" style="width:100%"></div></div></div><div class="card-body"><div class="eyebrow">Avant d’envoyer</div><h2>Confirmez vos réponses.</h2><p class="question-note">Ces informations permettent de préparer un bilan pertinent et sécurisant. Elles ne remplacent pas un avis médical.</p><div class="consents"><label class="consent"><input id="accuracy" type="checkbox"><span>Je confirme que mes réponses sont exactes à ma connaissance et je signalerai tout changement avant le rendez-vous.</span></label><label class="consent"><input id="use" type="checkbox"><span>J’accepte que les informations communiquées soient utilisées par EMPOWERFIT uniquement pour préparer, adapter et assurer le suivi de mon bilan.</span></label><label class="consent"><input id="scope" type="checkbox"><span>J’ai compris que ce bilan est un accompagnement sportif et qu’il ne remplace pas une consultation ou un diagnostic médical. Je m’engage à signaler toute douleur, gêne, malaise, symptôme inhabituel ou contre-indication, à interrompre immédiatement tout mouvement si nécessaire et à réaliser les tests dans un espace dégagé et sécurisé.</span></label><label class="consent optional"><input id="marketing" type="checkbox"><span>Facultatif — Je souhaite recevoir les conseils, actualités et offres EMPOWERFIT.</span></label></div><div class="error" id="submitError"></div><div class="actions"><button class="btn secondary" id="back">RETOUR</button><button class="btn" id="submit">VALIDER ET PRÉPARER MON BILAN</button></div></div>';
       document.getElementById("back").onclick=()=>{state.index=visibleSteps().length-1;renderQuestion()};
       document.getElementById("submit").onclick=submit;
       scrollTo({top:0,behavior:"smooth"});
@@ -236,7 +238,12 @@
     }
     function success(){
       state.answers={};
-      app.innerHTML='<div class="card-body"><div class="success-mark">✓</div><div class="eyebrow">Votre première étape est accomplie</div><h1>Merci, vos réponses ont bien été enregistrées.</h1><p class="lead">Je peux maintenant préparer votre bilan avec précision.</p><div class="revolution"><strong>Tenez-vous prête à entrer dans la Fitérus Révolution.</strong></div><p class="micro">Vous n’avez rien à imprimer. Nous reprendrons les éléments utiles ensemble pendant votre rendez-vous.</p></div>';
+      const videoCta=REVOLUTION_VIDEO_URL?'<a class="revolution-link" href="'+esc(REVOLUTION_VIDEO_URL)+'" target="_blank" rel="noopener noreferrer">DÉCOUVRIR LA FITÉRUS RÉVOLUTION</a>':'';
+      app.innerHTML='<div class="card-body"><div class="success-mark">✓</div><div class="eyebrow">Votre première étape est accomplie</div><h1>Merci, vos réponses ont bien été enregistrées.</h1><p class="lead">Je peux maintenant préparer votre bilan avec précision.</p><div class="revolution"><strong>Tenez-vous prête à entrer dans la Fitérus Révolution.</strong>'+videoCta+'</div><p class="micro">Vous n’avez rien à imprimer. Nous reprendrons les éléments utiles ensemble pendant votre rendez-vous.</p></div>';
+      scrollTo({top:0,behavior:"smooth"});
+    }
+    function alreadySubmitted(){
+      app.innerHTML='<div class="card-body"><div class="success-mark">✓</div><div class="eyebrow">Questionnaire déjà validé</div><h1>Votre questionnaire a déjà été rempli.</h1><p class="lead">Vos réponses ont bien été enregistrées. Vous n’avez pas besoin de le compléter à nouveau.</p><p>Si vous souhaitez ajouter ou préciser une information, nous la reprendrons ensemble le jour J avec Samia.</p><p class="micro">Conservez simplement votre e-mail de confirmation pour accéder au lien Google Meet.</p></div>';
       scrollTo({top:0,behavior:"smooth"});
     }
     function failure(message){
@@ -248,7 +255,7 @@
       const context=Array.isArray(data)?data[0]:data;
       if(error||!context){failure("Ce lien est invalide, a expiré ou la réservation n’est plus active.");return}
       state.context=context;
-      if(context.already_submitted){success();return}
+      if(context.already_submitted){alreadySubmitted();return}
       welcome();
     }
     init();
