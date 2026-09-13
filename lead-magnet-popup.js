@@ -89,6 +89,6 @@
   });
 
   let opened=false;const open=()=>{if(opened)return;opened=true;overlay.classList.add('ef-open');};
-  setTimeout(open,7000);
+  setTimeout(open,5000);
   window.addEventListener('scroll',()=>{if(opened)return;const h=document.documentElement.scrollHeight-innerHeight;if(h>0 && scrollY/h>.42)open();},{passive:true});
 })();
