@@ -22,6 +22,7 @@
   .ef-lead-brand h2{font-family:Georgia,serif;font-size:2.25rem;line-height:1.02;margin:26px 0 15px;color:#F7F1E5}
   .ef-lead-brand p{line-height:1.55;margin:0;color:#eadbe2}
   .ef-lead-mini{font-size:.78rem;letter-spacing:.08em;text-transform:uppercase;color:#C7A667;font-weight:800}
+  .ef-lead-offer{font-size:1.3rem;letter-spacing:.1em;font-weight:950;color:#C7A667}
   .ef-lead-content{padding:36px 34px 32px}
   .ef-lead-content h3{font-family:Georgia,serif;color:#5F123F;font-size:1.65rem;margin:0 0 10px}
   .ef-lead-list{margin:18px 0 24px;padding:0;list-style:none;display:grid;gap:10px}
@@ -38,7 +39,7 @@
   .ef-lead-status{display:none;margin-top:10px;padding:10px 12px;border-radius:10px;font-size:.8rem;background:#f9e9eb;color:#922}
   .ef-lead-close{position:absolute;right:14px;top:12px;border:0;background:#fff;color:#5F123F;width:36px;height:36px;border-radius:50%;font-size:21px;cursor:pointer;box-shadow:0 5px 18px rgba(0,0,0,.08);z-index:2}
   .ef-lead-skip{display:block;border:0;background:transparent;color:#756B70;text-decoration:underline;margin:11px auto 0;cursor:pointer;font-size:.75rem}
-  @media(max-width:700px){.ef-lead-modal{grid-template-columns:1fr;max-height:94vh}.ef-lead-brand{min-height:0;border-radius:26px 26px 0 0;padding:25px 26px}.ef-lead-brand h2{font-size:1.75rem;margin:18px 0 10px}.ef-lead-brand p{font-size:.9rem}.ef-lead-content{padding:26px}.ef-lead-brand img{width:115px}}
+  @media(max-width:700px){.ef-lead-modal{grid-template-columns:1fr;max-height:94vh}.ef-lead-brand{min-height:0;border-radius:26px 26px 0 0;padding:25px 26px}.ef-lead-brand h2{font-size:1.75rem;margin:18px 0 10px}.ef-lead-brand p{font-size:.9rem}.ef-lead-content{padding:26px}.ef-lead-brand img{width:115px}.ef-lead-offer{font-size:1.22rem}}
   `;
   document.head.appendChild(style);
 
@@ -49,7 +50,7 @@
   overlay.setAttribute('aria-label','Guide gratuit EMPOWERFIT');
   overlay.innerHTML=`<div class="ef-lead-modal">
     <button class="ef-lead-close" aria-label="Fermer">×</button>
-    <div class="ef-lead-brand"><div><img src="${LOGO}" alt="Logo EMPOWERFIT"><div class="ef-lead-mini" style="margin-top:28px">GUIDE OFFERT · 8 PAGES</div><h2>La force comme capital santé.</h2><p>Un guide concret pour comprendre ce que la force peut changer aujourd’hui - et ce qu’elle peut préserver demain.</p></div><p class="ef-lead-mini">ICI, ON AIME PRENDRE DE LA PLACE.</p></div>
+    <div class="ef-lead-brand"><div><img src="${LOGO}" alt="Logo EMPOWERFIT"><div class="ef-lead-mini" style="margin-top:28px"><strong class="ef-lead-offer">GUIDE OFFERT</strong> · 8 PAGES</div><h2>La force comme capital santé.</h2><p>Un guide concret pour comprendre ce que la force peut changer aujourd’hui - et ce qu’elle peut préserver demain.</p></div><p class="ef-lead-mini">ICI, ON AIME PRENDRE DE LA PLACE.</p></div>
     <div class="ef-lead-content"><h3>Recevez le guide gratuitement.</h3><p style="margin:0;color:#62555b;line-height:1.5">Vous y trouverez une méthode claire, un auto-bilan en 8 questions et une semaine Fondation directement applicable.</p>
       <ul class="ef-lead-list"><li>Comprendre la logique Force & Longévité</li><li>Identifier votre prochaine priorité grâce aux 8 questions</li><li>Tester une semaine simple de force, contrôle et mobilité</li></ul>
       <form class="ef-lead-form">
