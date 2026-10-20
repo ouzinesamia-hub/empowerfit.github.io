@@ -223,7 +223,7 @@ function showPanel(category,location){
 }
 async function loadSlots(){
  const {data,error}=await db.rpc('list_available_items_v2');
- if(error){console.error(error);slots=[]}else slots=(data||[]).filter(x=>x.title?.trim().toLocaleLowerCase('fr-FR')!=='bilan initial obligatoire');
+ if(error){console.error(error);slots=[];for(const id of ['eventGrid','bilanGrid','courseGrid']){const grid=document.getElementById(id);if(grid)grid.textContent='Les disponibilités ne peuvent pas être chargées pour le moment. Merci de réessayer dans quelques instants.';}return;}else slots=(data||[]).filter(x=>x.title?.trim().toLocaleLowerCase('fr-FR')!=='bilan initial obligatoire');
  render();
 }
 function restoreContact(){
