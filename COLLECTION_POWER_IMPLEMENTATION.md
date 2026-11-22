@@ -91,3 +91,17 @@ Variables secrètes de la fonction `ebook-access` à configurer côté Supabase 
 - `EBOOK_PRICE_PACK=price_1UecNMAgR1CLpeJlviBqMmEa`
 
 Avant publication : confirmer le régime TVA applicable à ces ouvrages et si Stripe Tax doit être activé ; vérifier les tests de paiement, la bonne URL de retour et la récupération après achat.
+
+## Variante urgente : paiement Stripe accessible sans o2switch (22 novembre 2026)
+- `ebook-receipt` a été déployée sur Supabase pour servir la page de récupération sans attendre la remise en ligne du domaine commercial.
+- URL publique de retour **sans information personnelle** :
+  `https://fkyieurufkxdvzovcqzj.supabase.co/functions/v1/ebook-receipt`.
+- La redirection de Stripe devra être :
+  `https://fkyieurufkxdvzovcqzj.supabase.co/functions/v1/ebook-receipt?session_id={CHECKOUT_SESSION_ID}`
+  après validation des tests et de l'option de redirection Stripe.
+- `ebook-access` est déployée version 6, avec l'origine Supabase de la page de retour autorisée. Cette fonction vérifie le paiement via Stripe avant de renvoyer des liens privés temporaires.
+- `ebook-checkout` est déployée, **fermée par défaut** (variable `EBOOK_SALES_OPEN` absente = false).
+- Les 4 produits Stripe et les prix ont été créés en production mais laissés **inactifs** ; aucun lien de paiement client n'a été créé.
+- Les 4 variables `EBOOK_PRICE_*` sont indiquées par l'utilisatrice comme enregistrées côté Supabase ; leurs valeurs effectives ne sont pas lisibles par le connecteur actuel et leur fonctionnement doit être testé.
+- Avant vente publique, s'assurer de la qualification fiscale, des conditions de vente et de la possibilité de récupérer les livres si la page est quittée avant le téléchargement (envoi e-mail ou canal de support fiable).
+- La page Google/GitHub du site n'a pas été modifiée ; les achats pourront transiter directement via des Payment Links Stripe distribués sur Instagram.
