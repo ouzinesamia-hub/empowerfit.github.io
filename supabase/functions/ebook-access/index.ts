@@ -13,6 +13,7 @@ const allowedOrigins = [
   'https://www.empowerfit-studio.fr',
   'https://empowerfit-studio.fr',
   'https://ouzinesamia-hub.github.io',
+  'https://fkyieurufkxdvzovcqzj.supabase.co',
 ]
 
 const catalog = {
