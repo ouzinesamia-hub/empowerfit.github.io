@@ -63,3 +63,13 @@ Ils sont regroupés dans l'archive `EMPOWERFIT_LIVRAISON_PRIVEE_3_PDF.zip` livr�
 ## Pour éviter une mise en vente prématurée
 Ne pas fusionner cette PR ni activer les boutons d'achat tant que : (1) les trois PDF ne sont pas dans le bucket, (2) les produits et prix Stripe ne sont pas correctement définis, (3) le service e-mail n'est pas configuré et testé, (4) le traitement de la TVA et les CGV ne sont pas validés.
 
+
+## Lancement accéléré : téléchargement immédiat, sans attendre Resend
+- `ebook-merci.html` est une page de retour Stripe créée sur la branche de préparation, **non publiée**.
+- `supabase/functions/ebook-access/index.ts` est une Edge Function créée sur la branche, **non déployée**.
+- À la confirmation Stripe, rediriger vers `https://www.empowerfit-studio.fr/ebook-merci.html?session_id={CHECKOUT_SESSION_ID}` (après confirmation que cette route est accessible).
+- La page retire immédiatement la référence de paiement de la barre d'adresse ; la fonction vérifie le paiement auprès de Stripe, un identifiant de prix autorisé et la correspondance du montant.
+- La fonction délivre les liens privés signés vers les PDF et inscrit la commande dans `ebook_orders`.
+- À configurer côté secrets Supabase : `EBOOK_PRICE_YOGA`, `EBOOK_PRICE_PILATES`, `EBOOK_PRICE_FIT`, `EBOOK_PRICE_PACK`. Les autres secrets serveur sont recherchés parmi ceux du webhook existant.
+- Les e-mails Resend restent un deuxième mécanisme de livraison à mettre en place après validation du domaine. **Ce parcours sans e-mail exige d'avertir les clientes de sauvegarder immédiatement les PDF** ; pour la production, prévoir récupération de commande/réémission en cas de perte du lien.
+- **Tester intégralement en mode test ou sur environnement sécurisé, puis production contrôlée, avant toute vente**.
