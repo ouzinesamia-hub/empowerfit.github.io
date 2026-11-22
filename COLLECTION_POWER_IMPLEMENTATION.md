@@ -73,3 +73,21 @@ Ne pas fusionner cette PR ni activer les boutons d'achat tant que : (1) les troi
 - À configurer côté secrets Supabase : `EBOOK_PRICE_YOGA`, `EBOOK_PRICE_PILATES`, `EBOOK_PRICE_FIT`, `EBOOK_PRICE_PACK`. Les autres secrets serveur sont recherchés parmi ceux du webhook existant.
 - Les e-mails Resend restent un deuxième mécanisme de livraison à mettre en place après validation du domaine. **Ce parcours sans e-mail exige d'avertir les clientes de sauvegarder immédiatement les PDF** ; pour la production, prévoir récupération de commande/réémission en cas de perte du lien.
 - **Tester intégralement en mode test ou sur environnement sécurisé, puis production contrôlée, avant toute vente**.
+
+## Identifiants Stripe créés (production, inactifs) — 22 novembre 2026
+Les quatre produits et prix Stripe suivants sont créés en **mode live mais inactifs** ; aucun lien de paiement n'a été ouvert. Le `tax_code` `txcd_10302000` est une catégorie candidate « livre numérique téléchargé » **à valider fiscalement** avant activation ; les prix sont TTC (`tax_behavior=inclusive`).
+
+| Code | Produit Stripe | Tarif Stripe | Montant |
+|---|---|---|---|
+| yoga | `prod_VfyJGSPodgtICq` | `price_1UecNGAgR1CLpeJl0A8YSRaR` | 17 € |
+| pilates | `prod_VfyJdYIvaVtkiQ` | `price_1UecNIAgR1CLpeJlEE7XV43q` | 17 € |
+| fit | `prod_VfyJ4CwSeicACl` | `price_1UecNKAgR1CLpeJlm4mDU3HO` | 17 € |
+| pack | `prod_VfyJjzh6sMG2u5` | `price_1UecNMAgR1CLpeJlviBqMmEa` | 39 € |
+
+Variables secrètes de la fonction `ebook-access` à configurer côté Supabase (identifiants de prix publics, aucun secret Stripe à partager dans le code) :
+- `EBOOK_PRICE_YOGA=price_1UecNGAgR1CLpeJl0A8YSRaR`
+- `EBOOK_PRICE_PILATES=price_1UecNIAgR1CLpeJlEE7XV43q`
+- `EBOOK_PRICE_FIT=price_1UecNKAgR1CLpeJlm4mDU3HO`
+- `EBOOK_PRICE_PACK=price_1UecNMAgR1CLpeJlviBqMmEa`
+
+Avant publication : confirmer le régime TVA applicable à ces ouvrages et si Stripe Tax doit être activé ; vérifier les tests de paiement, la bonne URL de retour et la récupération après achat.
