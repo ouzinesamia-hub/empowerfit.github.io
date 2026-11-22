@@ -7,7 +7,8 @@ import { createClient } from 'npm:@supabase/supabase-js@2.49.4'
 const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
 const webhookSecret = Deno.env.get('EBOOK_STRIPE_WEBHOOK_SECRET')
 const supabaseUrl = Deno.env.get('SUPABASE_URL')
-const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY')
+const secretKeys = JSON.parse(Deno.env.get('SUPABASE_SECRET_KEYS') || '{}')
+const supabaseKey = Deno.env.get('SUPABASE_SERVICE_ROLE_KEY') || secretKeys.default
 const resendKey = Deno.env.get('EBOOK_RESEND_API_KEY')
 const fromEmail = Deno.env.get('EBOOK_FROM_EMAIL')
 
