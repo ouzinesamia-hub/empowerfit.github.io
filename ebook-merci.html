@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="fr"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1">
+<meta name="referrer" content="no-referrer">
+<meta name="robots" content="noindex,nofollow">
+<meta name="theme-color" content="#5F123F">
+<title>Accéder à mes ebooks · EMPOWERFIT</title>
+<link rel="icon" href="favicon-empowerfit.svg" type="image/svg+xml">
+<style>
+:root{--prune:#5F123F;--beige:#F5F0DA;--ink:#190B14;--rose:#FF4F79}
+*{box-sizing:border-box}body{margin:0;min-height:100vh;display:flex;justify-content:center;align-items:center;background:var(--beige);color:var(--ink);font-family:system-ui,-apple-system,Segoe UI,sans-serif;padding:20px}
+main{background:white;border-radius:26px;padding:clamp(24px,5vw,48px);width:min(650px,100%);box-shadow:0 14px 38px #190b1417}
+.eyebrow{text-transform:uppercase;letter-spacing:.2em;color:var(--prune);font-weight:800;font-size:.74rem}
+h1{color:var(--prune);font-family:Georgia,serif;font-size:clamp(2rem,5vw,3rem);margin:.45em 0}
+p{line-height:1.65;color:#5e4d55}.btn{display:block;color:white;background:var(--prune);text-decoration:none;padding:14px 18px;border-radius:99px;font-weight:800;margin-top:13px;text-align:center}
+#downloads{padding:0;list-style:none}#downloads li{margin:12px 0}
+.note{padding:16px;background:#f8eef2;border-left:4px solid var(--rose);border-radius:10px}
+small{color:#71626b}.hidden{display:none}a:focus{outline:3px solid var(--rose)}
+</style></head>
+<body><main>
+<div class="eyebrow">EMPOWERFIT · Collection POWER</div>
+<h1 id="title">Votre paiement est en cours de vérification</h1>
+<p id="status" role="status" aria-live="polite">Nous vérifions votre commande pour préparer vos ebooks.</p>
+<div id="ready" class="hidden">
+<p>Merci pour votre achat ! Cliquez sur les liens ci-dessous pour enregistrer vos livres sur votre appareil.</p>
+<ul id="downloads"></ul>
+<p class="note">Ces liens de téléchargement sont privés et valables 7 jours. Enregistrez les PDF sur votre téléphone ou ordinateur pour les conserver.</p>
+</div>
+<p><small>Si le téléchargement ne fonctionne pas, contactez EMPOWERFIT depuis votre conversation Instagram.</small></p>
+<a href="https://ig.me/m/fiterus.revolution" rel="noopener noreferrer">Contacter EMPOWERFIT</a>
+</main>
+<script>
+(async ()=>{
+ const query=new URLSearchParams(location.search);
+ const sessionId=query.get('session_id');
+ if(sessionId){history.replaceState({},'',location.pathname);}
+ const title=document.getElementById('title');
+ const status=document.getElementById('status');
+ if(!sessionId){title.textContent='Référence de paiement absente';status.textContent='Retournez sur votre confirmation Stripe. Si vous avez payé, contactez EMPOWERFIT.';return;}
+ try {
+  const response=await fetch('https://fkyieurufkxdvzovcqzj.supabase.co/functions/v1/ebook-access',{
+   method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({session_id:sessionId})
+  });
+  const result=await response.json();
+  if(!response.ok || !Array.isArray(result.downloads) || result.downloads.length===0) throw Error(result.error||'Échec de vérification');
+  const list=document.getElementById('downloads');
+  result.downloads.forEach((entry,index)=>{
+   const li=document.createElement('li');
+   const a=document.createElement('a');
+   a.className='btn';a.href=entry.url;a.rel='noopener noreferrer';a.referrerPolicy='no-referrer';
+   a.textContent='Télécharger le livre '+(result.downloads.length>1?String(index+1):'');
+   a.setAttribute('aria-label','Télécharger '+entry.label); li.appendChild(a);list.appendChild(li);
+  });
+  title.textContent='Vos ebooks sont prêts';
+  status.textContent='Paiement confirmé.';
+  document.getElementById('ready').classList.remove('hidden');
+ }catch(e){
+  title.textContent='Téléchargement à finaliser';
+  status.textContent='Nous ne pouvons pas encore afficher vos PDF. Si vous avez été prélevée, ne payez pas une seconde fois : contactez EMPOWERFIT.';
+ }
+})();
+</script>
+</body></html>
