@@ -41,7 +41,7 @@ button{font:inherit}button:disabled{opacity:.75;cursor:not-allowed}
 .footer{text-align:center;padding:28px 14px 38px;background:#2b1525;color:#eee;font-size:.86rem}
 .footer a{color:#eee}
 @media(max-width:800px){.cards,.method{grid-template-columns:1fr}.pack{grid-template-columns:1fr}.hero{padding:58px 0 34px}.pack{padding:25px}.cover{min-height:170px}}
-</style>
+ .cover{padding:0;min-height:0}.cover-img{display:block;width:100%;aspect-ratio:1/1;object-fit:cover}</style>
 </head>
 <body>
 <header>
@@ -56,15 +56,15 @@ button{font:inherit}button:disabled{opacity:.75;cursor:not-allowed}
 <div class="ribbon">36 pages par guide · Exercices · Séances guidées · Programme de 21 jours</div>
 </section>
 <section aria-label="Les trois ebooks" class="cards">
-<article class="card"><div class="cover cover-yoga"><small>LA COLLECTION POWER</small><strong>POWER YOGA</strong><em>Femme Forte</em></div><div class="card-body">
+<article class="card"><div class="cover cover-yoga"><img class="cover-img" src="assets/ebooks/power-yoga-vignette.svg" alt="Vignette Power Yoga — Femme Forte" loading="lazy"></div><div class="card-body">
 <h3>Power Yoga</h3><p>Mobilité, respiration, amplitude active et récupération complémentaire à la musculation.</p>
 <ul><li>Comprendre la mobilité utile au quotidien</li><li>Adapter les postures à votre niveau</li><li>21 jours pour installer votre pratique</li></ul><div class="price">17 €</div><button class="cta buy-button" type="button" data-product="yoga">Acheter en ligne</button>
 </div></article>
-<article class="card"><div class="cover cover-pilates"><small>LA COLLECTION POWER</small><strong>POWER PILATES</strong><em>Femme Solide</em></div><div class="card-body">
+<article class="card"><div class="cover cover-pilates"><img class="cover-img" src="assets/ebooks/power-pilates-vignette.svg" alt="Vignette Power Pilates — Femme Solide" loading="lazy"></div><div class="card-body">
 <h3>Power Pilates</h3><p>Centre du corps, contrôle du mouvement, respiration et conscience des appuis.</p>
 <ul><li>Apprendre à coordonner effort et respiration</li><li>Renforcer le contrôle sans vous crisper</li><li>21 jours pour construire vos repères</li></ul><div class="price">17 €</div><button class="cta buy-button" type="button" data-product="pilates">Acheter en ligne</button>
 </div></article>
-<article class="card"><div class="cover cover-fit"><small>LA COLLECTION POWER</small><strong>POWER FIT</strong><em>Femme Puissante</em></div><div class="card-body">
+<article class="card"><div class="cover cover-fit"><img class="cover-img" src="assets/ebooks/power-fit-vignette.svg" alt="Vignette Power Fit — Femme Puissante" loading="lazy"></div><div class="card-body">
 <h3>Power Fit</h3><p>Les fondamentaux de la musculation, la progression des charges et les séances structurées.</p>
 <ul><li>Découvrir les grands mouvements</li><li>Progresser progressivement, sans brûler les étapes</li><li>21 jours pour prendre confiance avec la force</li></ul><div class="price">17 €</div><button class="cta buy-button" type="button" data-product="fit">Acheter en ligne</button>
 </div></article>
@@ -105,7 +105,7 @@ button{font:inherit}button:disabled{opacity:.75;cursor:not-allowed}
 </footer>
 <dialog id="purchase-dialog" aria-labelledby="purchase-title">
   <h2 id="purchase-title">Commander votre ebook</h2>
-  <p id="purchase-description">Vous allez être redirigée vers Stripe pour payer en toute sécurité.</p>
+  <p id="purchase-description">Vous serez redirigée vers Stripe pour régler votre ebook en toute sécurité.</p>
   <p>Après le paiement, vos PDF seront proposés <strong>immédiatement sur la page de confirmation</strong>. Enregistrez-les sur votre appareil : l'envoi des PDF par e-mail n'est pas encore disponible.</p>
   <div class="terms-choice">
   <label><input type="checkbox" id="accept-terms"/> J'ai lu les <a href="#conditions" id="terms-link">informations essentielles de vente</a> et les accepte.</label>
@@ -135,7 +135,7 @@ dialog::backdrop{background:#190B14a6}dialog h2{margin:0 0 16px;font-size:2rem}d
  const confirm=document.getElementById('confirm-purchase');
  const cancel=document.getElementById('cancel-purchase');
  const status=document.getElementById('purchase-status');
- const endpoint='https://fkyieurufkxdvzovcqzj.supabase.co/functions/v1/ebook-checkout';
+ const paymentLinks={"yoga":"https://book.stripe.com/6oU14mdhh2NY7fOglx63K0q","pilates":"https://book.stripe.com/7sY4gy4KL60aeIgfht63K0r","fit":"https://book.stripe.com/8x28wO5OP74ebw42uH63K0s","pack":"https://book.stripe.com/dRm8wOfpp74e2Zyglx63K0t"};
  let chosen=null;
  function sync(){confirm.disabled=!(agree.checked&&immediate.checked);}
  for(const b of document.querySelectorAll('.buy-button')){
@@ -148,15 +148,12 @@ dialog::backdrop{background:#190B14a6}dialog h2{margin:0 0 16px;font-size:2rem}d
  agree.addEventListener('change',sync);immediate.addEventListener('change',sync);
  cancel.addEventListener('click',()=>dialog.close());
  document.getElementById('terms-link').addEventListener('click',()=>dialog.close());
- confirm.addEventListener('click',async()=>{
+ confirm.addEventListener('click',()=>{
   if(confirm.disabled||!chosen)return;
-  const product=chosen;confirm.disabled=true;status.textContent='Ouverture du paiement sécurisé…';
-  try{
-   const r=await fetch(endpoint,{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({product,accept_terms:true,immediate_delivery:true,withdrawal_ack:true})});
-   const data=await r.json();
-   if(!r.ok||typeof data.url!=='string'||!data.url.startsWith('https://checkout.stripe.com/'))throw Error(data.error||'Paiement momentanément indisponible.');
-   location.assign(data.url);
-  }catch(e){status.textContent=e instanceof Error?e.message:'Veuillez réessayer.';sync();}
+  const url=paymentLinks[chosen];
+  if(!url||!url.startsWith('https://book.stripe.com/')){status.textContent='Lien indisponible.';return;}
+  confirm.disabled=true;status.textContent='Ouverture du paiement sécurisé…';
+  window.location.assign(url);
  });
 })();
 </script>
