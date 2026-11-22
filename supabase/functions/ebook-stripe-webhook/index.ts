@@ -90,17 +90,27 @@ Deno.serve(async (request) => {
     if (insertError) throw insertError
 
     const { data: order, error: selectError } = await db.from('ebook_orders')
-      .select('id,delivery_status').eq('stripe_checkout_session_id', session.id).single()
+      .select('id,delivery_status,updated_at,delivery_attempts').eq('stripe_checkout_session_id', session.id).single()
     if (selectError) throw selectError
     if (order.delivery_status === 'sent') return reply({ received: true, already_sent: true })
-    if (order.delivery_status === 'sending') return reply({ received: true, processing: true })
 
-    // Claim atomique : évite deux mails si Stripe renvoie deux fois le même événement.
-    const { data: claimed, error: claimError } = await db.from('ebook_orders').update({
-      delivery_status: 'sending', updated_at: new Date().toISOString()
-    }).eq('id', order.id).in('delivery_status', ['pending', 'failed']).select('id').maybeSingle()
+    // Empêche les doubles envois, y compris en cas de reprise d'un appel abandonné.
+    const staleBefore = new Date(Date.now() - 10 * 60_000).toISOString()
+    if (order.delivery_status === 'sending' && order.updated_at >= staleBefore) {
+      // Demander à Stripe de retenter ; ne jamais acquitter un envoi non terminé.
+      return reply({ error: 'Envoi en cours, nouvelle tentative demandée' }, 503)
+    }
+
+    const claim = db.from('ebook_orders').update({
+      delivery_status: 'sending',
+      delivery_attempts: (Number(order.delivery_attempts) || 0) + 1,
+      updated_at: new Date().toISOString(),
+    }).eq('id', order.id)
+    if (order.delivery_status === 'sending') claim.eq('delivery_status', 'sending').lt('updated_at', staleBefore)
+    else claim.in('delivery_status', ['pending', 'failed'])
+    const { data: claimed, error: claimError } = await claim.select('id').maybeSingle()
     if (claimError) throw claimError
-    if (!claimed) return reply({ received: true, processing: true })
+    if (!claimed) return reply({ error: 'Commande en cours de traitement' }, 503)
 
     const links: { label: string; url: string }[] = []
     for (const path of product.files) {
