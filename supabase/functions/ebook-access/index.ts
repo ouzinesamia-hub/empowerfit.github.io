@@ -63,7 +63,7 @@ Deno.serve(async (request) => {
   } catch {
     return json({ error: 'Demande invalide.' }, 400, origin)
   }
-  if (!/^cs_(test_)?[a-zA-Z0-9]{20,200}$/.test(sessionId)) {
+  if (!/^cs_(?:test_|live_)[a-zA-Z0-9_]{20,200}$/.test(sessionId)) {
     return json({ error: 'Référence de paiement invalide.' }, 400, origin)
   }
   try {
