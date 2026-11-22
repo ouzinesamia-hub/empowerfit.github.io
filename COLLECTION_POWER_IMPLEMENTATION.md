@@ -43,7 +43,23 @@ Vendre les 3 ebooks PDF EMPOWERFIT (Power Yoga / Power Pilates / Power Fit) à 1
 - Achat de test de chacun des quatre produits, réception du bon lien, accès au bon PDF, aucune double livraison ou commande.
 - Déployer sur o2switch **uniquement après validation**.
 
-## État
+## État vérifié le 22 novembre 2026
 - Page commerciale maquette créée sur une branche GitHub de préparation.
 - Boutons de paiement volontairement désactivés.
-- Aucune table, Edge Function, bucket, lien Stripe ou e-mail créé par cette modification.
+- **Migration SQL exécutée dans le projet Supabase `empowerfit-reservations`** : les tables `public.ebook_orders` et `public.ebook_webhook_events` existent, RLS activée, accès publics révoqués.
+- **Bucket privé `ebooks-empowerfit` créé**, avec `public = false` et PDF uniquement. Les fichiers ne sont PAS encore téléchargés dans le bucket.
+- Le fichier `supabase/migrations/202611210001_ebook_orders.sql` est la version contrôlée de la structure déjà appliquée ; attention aux outils de migrations avant `db push`.
+- Le code `ebook-stripe-webhook` est en brouillon GitHub, **non déployé**.
+- Aucun nouveau produit, lien Stripe ni e-mail acheteur n'est actif.
+
+## Fichiers à déposer manuellement dans `ebooks-empowerfit`
+Conserver **exactement** ces noms à la racine :
+- `power-yoga-femme-forte.pdf` (36 pages)
+- `power-pilates-femme-solide.pdf` (36 pages)
+- `power-fit-femme-puissante.pdf` (36 pages)
+
+Ils sont regroupés dans l'archive `EMPOWERFIT_LIVRAISON_PRIVEE_3_PDF.zip` livrée dans la conversation, mais cette archive ne doit pas être publiée sur le site.
+
+## Pour éviter une mise en vente prématurée
+Ne pas fusionner cette PR ni activer les boutons d'achat tant que : (1) les trois PDF ne sont pas dans le bucket, (2) les produits et prix Stripe ne sont pas correctement définis, (3) le service e-mail n'est pas configuré et testé, (4) le traitement de la TVA et les CGV ne sont pas validés.
+
