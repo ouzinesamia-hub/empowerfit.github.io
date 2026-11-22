@@ -16,7 +16,8 @@ const prices: Record<string,string|undefined> = {
 }
 const stripeKey = Deno.env.get('STRIPE_SECRET_KEY')
 const open = Deno.env.get('EBOOK_SALES_OPEN') === 'true'
-const baseUrl = 'https://www.empowerfit-studio.fr'
+// Retour fiable en attendant la migration o2switch du site principal.
+const baseUrl = 'https://ouzinesamia-hub.github.io/empowerfit.github.io'
 
 function response(obj: Record<string,unknown>, code: number, origin: string) {
   const headers:Record<string,string> = {'content-type':'application/json','cache-control':'no-store','vary':'Origin'}
@@ -50,7 +51,7 @@ Deno.serve(async req => {
       customer_creation:'always',
       locale:'fr',
       success_url:baseUrl+'/ebook-merci.html?session_id={CHECKOUT_SESSION_ID}',
-      cancel_url:baseUrl+'/collection-power.html',
+      cancel_url:baseUrl+'/programmes-en-ligne.html',
       metadata:{origin:'empowerfit_collection_power',ebook_code:code},
     })
     if (!session.url) throw Error('Stripe Checkout sans URL')
