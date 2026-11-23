@@ -412,7 +412,8 @@ bookingForm.onsubmit=async e=>{
  submit.disabled=false;submit.textContent='Vérifier et réserver';
  if(!result.error){await loadSlots();setTimeout(()=>{booking.close();bookingForm.reset()},5000)}
 };
-(async()=>{await loadSlots();showPanelFromHash();await handleStripeReturn()})();
+showPanelFromHash();
+(async()=>{await loadSlots();await handleStripeReturn()})();
 setInterval(loadSlots,20000);
 </script>
 </body></html>
